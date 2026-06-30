@@ -132,9 +132,9 @@ export function CustomDatePicker({
       </button>
 
       {isOpen && (
-        <div className="absolute z-[100] mt-1 left-0 w-full min-w-[280px] bg-white rounded-lg shadow-xl border border-orange-200 animate-in">
+        <div className="absolute z-[100] mt-1 left-0 w-[240px] bg-white rounded-lg shadow-xl border border-orange-200 animate-in">
           {/* Header */}
-          <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-3 text-white rounded-t-lg">
+          <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 text-white rounded-t-lg">
             <div className="flex items-center justify-between mb-2">
               <button
                 type="button"
@@ -184,15 +184,15 @@ export function CustomDatePicker({
           </div>
 
           {/* Calendar Grid */}
-          <div className="p-3">
-            <div className="grid grid-cols-7 gap-1 mb-1">
+          <div className="p-2">
+            <div className="grid grid-cols-7 gap-0.5 mb-1">
               {daysOfWeek.map((day) => (
                 <div key={day} className="text-center text-xs font-medium text-gray-500 py-1">
                   {day}
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-0.5">
               {generateCalendarDays().map((day, index) => (
                 <button
                   key={index}
@@ -200,7 +200,7 @@ export function CustomDatePicker({
                   disabled={day === null}
                   onClick={() => day && handleDateSelect(day)}
                   className={`
-                    aspect-square flex items-center justify-center rounded text-sm font-medium transition-all
+                    w-7 h-7 flex items-center justify-center rounded text-xs font-medium transition-all
                     ${day === null ? 'invisible' : 'hover:bg-orange-100'}
                     ${isSelected(day!) ? 'bg-orange-500 text-white hover:bg-orange-600' : ''}
                     ${isToday(day!) && !isSelected(day!) ? 'border border-orange-500 text-orange-600' : ''}
@@ -214,7 +214,7 @@ export function CustomDatePicker({
           </div>
 
           {/* Quick Actions */}
-          <div className="px-3 pb-3 flex gap-2">
+          <div className="px-2 pb-2 flex gap-1">
             <button
               type="button"
               onClick={() => {
