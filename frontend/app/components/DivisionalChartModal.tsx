@@ -18,7 +18,7 @@ interface DivisionalChartModalProps {
   kundaliId: string;
 }
 
-const API_HOST = process.env.NEXT_PUBLIC_API_HOST?.replace('/api', '') || 'http://localhost:8000';
+const API_HOST = process.env.NEXT_PUBLIC_API_BASE?.replace('/api', '') || 'http://localhost:8000';
 
 export function DivisionalChartModal({
   isOpen,
