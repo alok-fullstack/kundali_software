@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { CustomDatePicker, CustomTimePicker } from '../components/ui/DateTimePicker';
-import { generateKundali } from '@/lib/api';
+import { generateKundali, getGemstoneRecommendations } from '@/lib/api';
 import { GemstoneResponse, GemstoneRecommendation, StoneToAvoid, GuidelineSection } from '@/lib/types';
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
