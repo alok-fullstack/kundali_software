@@ -103,8 +103,15 @@ async def analyze_prashna_kundali(request: PrashnaRequest):
             longitude=lon
         )
 
+        # Convert Kundali object to dictionary for analyze_prashna
+        chart_data = {
+            "planets": chart.planets,
+            "lagna": chart.lagna,
+            "houses": chart.houses
+        }
+
         # Analyze the question
-        result = analyze_prashna(chart, request.question_type)
+        result = analyze_prashna(chart_data, request.question_type)
 
         return {
             "success": True,
