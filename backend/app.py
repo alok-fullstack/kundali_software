@@ -15,6 +15,7 @@ Or directly:
     python -m backend.main
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -156,15 +157,21 @@ Planetary positions are calculated with Swiss Ephemeris accuracy:
 )
 
 # CORS middleware for Next.js frontend
+# Get allowed origins from environment variable or use defaults
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "").split(",") if os.getenv("ALLOWED_ORIGINS") else []
+allowed_origins.extend([
+    "http://localhost:3000",      # Next.js dev server
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",      # Alternative port
+    "http://localhost:5173",      # Vite dev server
+    "http://localhost:5000",      # Flask dev server (for testing)
+])
+# Remove empty strings and duplicates
+allowed_origins = list(set(filter(None, allowed_origins)))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",      # Next.js dev server
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",      # Alternative port
-        "http://localhost:5173",      # Vite dev server
-        "http://localhost:5000",      # Flask dev server (for testing)
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
