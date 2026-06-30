@@ -288,9 +288,10 @@ class DoshaAnalyzer:
         if rahu_rashi in [1, 2, 4, 5, 8, 11]:  # Benefic positions for Rahu
             cancellation.append("Rahu in favorable sign - राहु शुभ राशि में / Rahu in good sign")
 
-        # 3. Jupiter aspects Rahu/Ketu
+        # 3. Jupiter aspects Rahu/Ketu (5th, 7th, 9th aspects)
         jupiter_house = self._get_planet_house("JUPITER")
-        jupiter_aspects = [(jupiter_house + 4) % 12 + 1, (jupiter_house + 6) % 12 + 1, (jupiter_house + 8) % 12 + 1]
+        # Use 'or 12' to handle modulo returning 0 (which should be house 12)
+        jupiter_aspects = [(jupiter_house + 4) % 12 or 12, (jupiter_house + 6) % 12 or 12, (jupiter_house + 8) % 12 or 12]
         if rahu_house in jupiter_aspects or ketu_house in jupiter_aspects:
             cancellation.append("Jupiter aspects Rahu/Ketu - गुरु की दृष्टि / Jupiter's aspect")
 
@@ -473,12 +474,15 @@ class DoshaAnalyzer:
         )
 
     def _get_house_lord(self, house_num: int) -> Optional[str]:
-        """Get the lord planet of a house"""
-        # This would need the actual lagna to calculate
-        # For now, return a placeholder
-        lagna_num = self._get_planet_rashi_num("LAGNA") if "LAGNA" in self.planets else 0
+        """Get the lord planet of a house based on Lagna sign"""
+        # Get lagna rashi number from self.lagna (not self.planets)
+        lagna_num = self.lagna.get("rashi_num", 0)
+        # Calculate which sign falls in the given house
         house_sign = (lagna_num + house_num - 1) % 12
 
+        # Sign lords: Aries=Mars, Taurus=Venus, Gemini=Mercury, Cancer=Moon,
+        # Leo=Sun, Virgo=Mercury, Libra=Venus, Scorpio=Mars,
+        # Sagittarius=Jupiter, Capricorn=Saturn, Aquarius=Saturn, Pisces=Jupiter
         sign_lords = {
             0: "MARS", 1: "VENUS", 2: "MERCURY", 3: "MOON",
             4: "SUN", 5: "MERCURY", 6: "VENUS", 7: "MARS",
