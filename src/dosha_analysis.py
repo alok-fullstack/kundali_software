@@ -817,90 +817,179 @@ class DoshaAnalyzer:
     # MANGLIK DOSHA (from existing implementation)
     # =========================================================================
 
+    def _get_house_from_reference(self, planet: str, reference: str) -> int:
+        """
+        Calculate house position of a planet from a reference point.
+
+        Args:
+            planet: Planet name (e.g., "MARS")
+            reference: Reference point - "LAGNA", "MOON", or "VENUS"
+
+        Returns:
+            House number (1-12) from the reference point
+        """
+        planet_rashi = self._get_planet_rashi_num(planet)
+
+        if reference == "LAGNA":
+            ref_rashi = self.lagna.get("rashi_num", 0)
+        else:
+            ref_rashi = self._get_planet_rashi_num(reference)
+
+        # Calculate house (1-12)
+        house = ((planet_rashi - ref_rashi) % 12) + 1
+        return house
+
     def analyze_manglik_dosha(self) -> DoshaResult:
         """
-        Analyze Manglik (Kuja) Dosha.
+        Analyze Manglik (Kuja/Chevvai) Dosha.
 
-        Mars in houses 1, 2, 4, 7, 8, or 12 from Lagna, Moon, or Venus
+        Mars in houses 1, 2, 4, 7, 8, or 12 from Lagna, Moon, OR Venus
         causes Manglik Dosha.
 
-        Based on: Brihat Parashara Hora Shastra
+        Based on: Brihat Parashara Hora Shastra, Jataka Parijata
+
+        Note: Even if Mars is in these houses from ANY of the three
+        reference points (Lagna, Moon, Venus), Manglik Dosha exists.
         """
-        mars_house = self._get_planet_house("MARS")
         manglik_houses = {1, 2, 4, 7, 8, 12}
 
-        is_present = mars_house in manglik_houses
+        # Check Mars house from all three reference points
+        mars_from_lagna = self._get_house_from_reference("MARS", "LAGNA")
+        mars_from_moon = self._get_house_from_reference("MARS", "MOON")
+        mars_from_venus = self._get_house_from_reference("MARS", "VENUS")
 
-        # Check cancellation
+        # Manglik if Mars is in 1, 2, 4, 7, 8, 12 from ANY reference
+        is_manglik_from_lagna = mars_from_lagna in manglik_houses
+        is_manglik_from_moon = mars_from_moon in manglik_houses
+        is_manglik_from_venus = mars_from_venus in manglik_houses
+
+        is_present = is_manglik_from_lagna or is_manglik_from_moon or is_manglik_from_venus
+
+        # Build description of where manglik exists
+        manglik_sources = []
+        if is_manglik_from_lagna:
+            manglik_sources.append(f"Lagna से {mars_from_lagna}वें भाव में")
+        if is_manglik_from_moon:
+            manglik_sources.append(f"Moon से {mars_from_moon}वें भाव में")
+        if is_manglik_from_venus:
+            manglik_sources.append(f"Venus से {mars_from_venus}वें भाव में")
+
+        # Check cancellation factors
         cancellation = []
         mars_rashi = self._get_planet_rashi_num("MARS")
 
-        # Mars in own sign
-        if mars_rashi in [0, 7]:  # Aries, Scorpio
-            cancellation.append("Mars in own sign - मंगल स्वराशि में")
+        # 1. Mars in own sign (Aries=0, Scorpio=7)
+        if mars_rashi in [0, 7]:
+            cancellation.append("Mars in own sign (Aries/Scorpio) - मंगल स्वराशि में (मेष/वृश्चिक)")
 
-        # Mars exalted
-        if mars_rashi == 9:  # Capricorn
-            cancellation.append("Mars exalted - मंगल उच्च का")
+        # 2. Mars exalted (Capricorn=9)
+        if mars_rashi == 9:
+            cancellation.append("Mars exalted in Capricorn - मंगल मकर में उच्च का")
 
-        # Jupiter aspects Mars
-        jupiter_house = self._get_planet_house("JUPITER")
-        if abs(jupiter_house - mars_house) in [4, 6, 8] or jupiter_house == mars_house:
-            cancellation.append("Jupiter aspects Mars - गुरु की दृष्टि मंगल पर")
+        # 3. Mars debilitated (Cancer=3) - some texts say this reduces effect
+        if mars_rashi == 3:
+            cancellation.append("Mars debilitated in Cancer - मंगल कर्क में नीच का (प्रभाव कम)")
+
+        # 4. Jupiter aspects Mars (5th, 7th, 9th aspect)
+        jupiter_house = self._get_house_from_reference("JUPITER", "LAGNA")
+        mars_house_from_lagna = mars_from_lagna
+        jupiter_aspects = [(jupiter_house + 4) % 12 or 12, (jupiter_house + 6) % 12 or 12, (jupiter_house + 8) % 12 or 12]
+        if mars_house_from_lagna in jupiter_aspects or jupiter_house == mars_house_from_lagna:
+            cancellation.append("Jupiter aspects/conjuncts Mars - गुरु की दृष्टि/युति मंगल पर")
+
+        # 5. Venus aspects Mars
+        venus_house = self._get_house_from_reference("VENUS", "LAGNA")
+        if venus_house == mars_house_from_lagna:
+            cancellation.append("Venus conjunct Mars - शुक्र-मंगल युति (दोष कम)")
+
+        # 6. Mars in 2nd house in Gemini/Virgo (Mercury signs)
+        if mars_from_lagna == 2 and mars_rashi in [2, 5]:
+            cancellation.append("Mars in 2nd in Mercury sign - मंगल 2 में बुध राशि में (दोष कम)")
+
+        # 7. Mars in 12th house in Taurus/Libra (Venus signs)
+        if mars_from_lagna == 12 and mars_rashi in [1, 6]:
+            cancellation.append("Mars in 12th in Venus sign - मंगल 12 में शुक्र राशि में (दोष कम)")
+
+        # 8. If partner is also Manglik
+        # (This is checked during matching, not here)
 
         # Determine severity
         if not is_present:
             severity = DoshaSeverity.NONE
-        elif cancellation:
+        elif len(cancellation) >= 2:
             severity = DoshaSeverity.MILD
-        elif mars_house in {7, 8}:  # Most severe positions
+        elif cancellation:
+            severity = DoshaSeverity.MODERATE
+        elif mars_from_lagna in {7, 8} or mars_from_moon in {7, 8}:
             severity = DoshaSeverity.SEVERE
         else:
             severity = DoshaSeverity.MODERATE
 
         effects = [
-            "Delays or obstacles in marriage",
-            "Marital discord possible",
-            "Aggressive temperament",
-            "Partner's health concerns"
+            "Delays or obstacles in marriage / विवाह में देरी या रुकावट",
+            "Marital discord and arguments possible / वैवाहिक कलह संभव",
+            "Aggressive or dominating temperament / तीक्ष्ण या दबंग स्वभाव",
+            "Partner's health may need attention / जीवनसाथी के स्वास्थ्य पर ध्यान दें",
+            "High energy that needs positive channeling / ऊर्जा को सकारात्मक दिशा दें"
         ] if is_present else []
 
         effects_hindi = [
-            "विवाह में देरी या रुकावट",
-            "वैवाहिक जीवन में तनाव संभव",
-            "स्वभाव में तीक्ष्णता",
-            "जीवनसाथी के स्वास्थ्य की चिंता"
+            "विवाह में देरी या बाधा आ सकती है",
+            "वैवाहिक जीवन में तनाव या कलह संभव",
+            "स्वभाव में तीक्ष्णता या क्रोध",
+            "जीवनसाथी के स्वास्थ्य की चिंता",
+            "उच्च ऊर्जा को सही दिशा देना आवश्यक"
         ] if is_present else []
 
         remedies = [
-            "Kumbh Vivah (symbolic marriage) before actual marriage",
-            "Recite Hanuman Chalisa daily",
-            "Fast on Tuesdays",
-            "Donate red items on Tuesdays",
-            "Marry a Manglik partner (doshas cancel)"
+            "Kumbh Vivah (symbolic marriage with pot/tree) before actual marriage",
+            "Recite Hanuman Chalisa daily, especially on Tuesdays",
+            "Fast on Tuesdays (Mangalvar Vrat)",
+            "Donate red lentils, red cloth, copper on Tuesdays",
+            "Marry a Manglik partner (doshas cancel each other)",
+            "Worship Lord Hanuman and Kartikeya",
+            "Chant 'Om Kraam Kreem Kraum Sah Bhaumaya Namah' 108 times daily"
         ]
 
         remedies_hindi = [
-            "असली शादी से पहले कुंभ विवाह करें",
-            "रोज़ हनुमान चालीसा पढ़ें",
+            "विवाह से पहले कुंभ विवाह (घड़े/पेड़ से) करें",
+            "प्रतिदिन हनुमान चालीसा पढ़ें, विशेषकर मंगलवार को",
             "मंगलवार को व्रत रखें",
-            "मंगलवार को लाल चीजें दान करें",
-            "मांगलिक से शादी करें (दोष कट जाता है)"
+            "मंगलवार को मसूर दाल, लाल कपड़ा, तांबा दान करें",
+            "मांगलिक व्यक्ति से विवाह करें (दोष समाप्त)",
+            "हनुमान जी और कार्तिकेय की पूजा करें",
+            "मंगल मंत्र 'ॐ क्रां क्रीं क्रौं सः भौमाय नमः' 108 बार जपें"
         ]
+
+        # Build description
+        if is_present:
+            sources_str = ", ".join(manglik_sources)
+            description = f"Manglik Dosha present - Mars in houses {sources_str}"
+            description_hindi = f"मांगलिक दोष है - मंगल {sources_str}"
+        else:
+            description = "No Manglik Dosha - Mars not in 1, 2, 4, 7, 8, 12 from Lagna/Moon/Venus"
+            description_hindi = "मांगलिक दोष नहीं है - मंगल लग्न/चंद्र/शुक्र से 1,2,4,7,8,12 भाव में नहीं"
 
         return DoshaResult(
             name="Manglik Dosha",
             name_hindi="मांगलिक दोष",
             is_present=is_present,
             severity=severity,
-            description=f"Mars in {mars_house}th house - Manglik Dosha present" if is_present else "No Manglik Dosha",
-            description_hindi=f"मंगल {mars_house}वें भाव में - मांगलिक दोष है" if is_present else "मांगलिक दोष नहीं है",
+            description=description,
+            description_hindi=description_hindi,
             effects=effects,
             effects_hindi=effects_hindi,
             remedies=remedies if is_present else [],
             remedies_hindi=remedies_hindi if is_present else [],
             cancellation_factors=cancellation,
-            additional_info={"mars_house": mars_house}
+            additional_info={
+                "mars_from_lagna": mars_from_lagna,
+                "mars_from_moon": mars_from_moon,
+                "mars_from_venus": mars_from_venus,
+                "is_manglik_from_lagna": is_manglik_from_lagna,
+                "is_manglik_from_moon": is_manglik_from_moon,
+                "is_manglik_from_venus": is_manglik_from_venus
+            }
         )
 
     # =========================================================================
