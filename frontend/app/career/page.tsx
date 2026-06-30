@@ -118,7 +118,8 @@ export default function CareerPage() {
       });
 
       // Analyze career
-      const response = await fetch('http://localhost:8000/api/career/analyze', {
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
+      const response = await fetch(`${API_BASE}/career/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ kundali_data: kundaliData }),
