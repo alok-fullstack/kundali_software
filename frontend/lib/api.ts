@@ -182,7 +182,7 @@ export async function getGemstoneRecommendations(
   kundaliId: string
 ): Promise<GemstoneResponse> {
   try {
-    const response = await fetch(`${API_BASE}/gemstone`, {
+    const response = await fetch(`${API_BASE}/gemstone/analyze`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
