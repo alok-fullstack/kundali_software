@@ -8,8 +8,17 @@ interface ModalProps {
   title: string;
   titleIcon?: string;
   variant?: 'default' | 'muhurta' | 'health';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   children: React.ReactNode;
 }
+
+const sizeClasses = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-4xl',
+  '2xl': 'max-w-6xl',
+};
 
 export function Modal({
   isOpen,
@@ -17,6 +26,7 @@ export function Modal({
   title,
   titleIcon,
   variant = 'default',
+  size = '2xl',
   children,
 }: ModalProps) {
   // Close on escape key
@@ -55,7 +65,7 @@ export function Modal({
         }
       }}
     >
-      <div className="relative w-full max-w-6xl my-8 bg-white rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className={`relative w-full ${sizeClasses[size]} my-8 bg-white rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200`}>
         {/* Header */}
         <div className={`${headerStyles[variant]} text-white px-6 py-5 flex items-center justify-between`}>
           <h2 className="text-xl font-bold flex items-center gap-2">
