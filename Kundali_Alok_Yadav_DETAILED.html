@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>विस्तृत जन्म कुंडली - Alok Yadav</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #ff6b35;
+            --secondary: #8b4513;
+            --accent: #f7931e;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --light: #fff8f0;
+            --dark: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe4c4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header .om {
+            font-size: 4em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .name {
+            font-size: 1.8em;
+            opacity: 0.95;
+            margin-top: 10px;
+        }
+
+        .section {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.2em;
+        }
+
+        /* Birth Details Grid */
+        .birth-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .birth-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .birth-item .label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .birth-item .value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--dark);
+            margin-top: 5px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: var(--light);
+        }
+
+        tr:hover {
+            background: #ffe4c4;
+        }
+
+        /* Prediction Cards */
+        .prediction-card {
+            background: linear-gradient(135deg, var(--light) 0%, #ffe4c4 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid var(--primary);
+        }
+
+        .prediction-card h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .prediction-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .prediction-card li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .prediction-card li::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            position: absolute;
+            left: 5px;
+        }
+
+        /* Status indicators */
+        .status-good {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .status-warning {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .status-caution {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        /* Rating stars */
+        .rating {
+            color: var(--accent);
+            font-size: 1.2em;
+        }
+
+        /* Highlight boxes */
+        .highlight-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            border: 2px solid var(--warning);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .highlight-box.success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: var(--success);
+        }
+
+        .highlight-box.danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-color: var(--danger);
+        }
+
+        /* Kundali Chart */
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .chart-table {
+            border-collapse: collapse;
+        }
+
+        .chart-table td {
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--secondary);
+            background: var(--light);
+            vertical-align: top;
+            padding: 8px;
+            font-size: 0.85em;
+        }
+
+        .chart-table .rashi-name {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .chart-table .house-num {
+            color: #666;
+            font-size: 0.75em;
+        }
+
+        .chart-table .planets {
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .chart-table .lagna-house {
+            background: #fff3cd;
+            border: 3px solid var(--primary);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--primary);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .timeline-item.current {
+            background: #fff3cd;
+            border: 2px solid var(--warning);
+        }
+
+        .timeline-item.current::before {
+            background: var(--warning);
+            width: 16px;
+            height: 16px;
+            left: -26px;
+        }
+
+        /* Summary Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-card {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-top: 4px solid var(--primary);
+        }
+
+        .summary-card .title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .summary-card .rating {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            border: 1px solid var(--warning);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        /* Yoga Section */
+        .yoga-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .yoga-card {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid var(--success);
+        }
+
+        .yoga-card h4 {
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 20px; }
+            .chart-table td { width: 70px; height: 70px; font-size: 0.7em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="om">ॐ</div>
+            <h1>॥ श्री गणेशाय नमः ॥</h1>
+            <h1>विस्तृत जन्म कुंडली</h1>
+            <p class="name">Alok Yadav</p>
+        </div>
+
+        <!-- Birth Details Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🪔</span> जन्म विवरण</h2>
+            <div class="birth-grid">
+                <div class="birth-item">
+                    <div class="label">नाम</div>
+                    <div class="value">Alok Yadav</div>
+                </div>
+                <div class="birth-item">
+                    <div class="label">जन्म तिथि</div>
+                    <div class="value">25-10-1993</div>
+                </div>
+                <div class="birth-item">
+                    <div class="label">जन्म समय</div>
+                    <div class="value">05:15:00</div>
+                </div>
+                <div class="birth-item">
+                    <div class="label">जन्म स्थान</div>
+                    <div class="value">Amethi</div>
+                </div>
+                <div class="birth-item">
+                    <div class="label">लग्न राशि</div>
+                    <div class="value">कन्या (Virgo)</div>
+                </div>
+                <div class="birth-item">
+                    <div class="label">चंद्र राशि</div>
+                    <div class="value">कुंभ</div>
+                </div>
+                <div class="birth-item">
+                    <div class="label">जन्म नक्षत्र</div>
+                    <div class="value">Shatabhisha पाद 1</div>
+                </div>
+                <div class="birth-item">
+                    <div class="label">वर्तमान दशा</div>
+                    <div class="value">Jupiter-Rahu-Moon</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kundali Chart Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">📊</span> लग्न कुंडली</h2>
+            <div class="chart-container"><table class="chart-table"><tr>
+                <td >
+                    <div class="rashi-name">मीन</div>
+                    <div class="house-num">भाव 7</div>
+                    <div class="planets"></div>
+                </td>
+                <td >
+                    <div class="rashi-name">मेष</div>
+                    <div class="house-num">भाव 8</div>
+                    <div class="planets"></div>
+                </td>
+                <td >
+                    <div class="rashi-name">वृषभ</div>
+                    <div class="house-num">भाव 9</div>
+                    <div class="planets">☋(व) </div>
+                </td>
+                <td >
+                    <div class="rashi-name">मिथुन</div>
+                    <div class="house-num">भाव 10</div>
+                    <div class="planets"></div>
+                </td></tr><tr>
+                <td >
+                    <div class="rashi-name">कुंभ</div>
+                    <div class="house-num">भाव 6</div>
+                    <div class="planets">☽ </div>
+                </td><td style="background: linear-gradient(135deg, #fff8dc, #ffe4b5);"></td><td style="background: linear-gradient(135deg, #fff8dc, #ffe4b5);"></td>
+                <td >
+                    <div class="rashi-name">कर्क</div>
+                    <div class="house-num">भाव 11</div>
+                    <div class="planets"></div>
+                </td></tr><tr>
+                <td >
+                    <div class="rashi-name">मकर</div>
+                    <div class="house-num">भाव 5</div>
+                    <div class="planets">♄ </div>
+                </td><td style="background: linear-gradient(135deg, #fff8dc, #ffe4b5);"></td><td style="background: linear-gradient(135deg, #fff8dc, #ffe4b5);"></td>
+                <td >
+                    <div class="rashi-name">सिंह</div>
+                    <div class="house-num">भाव 12</div>
+                    <div class="planets"></div>
+                </td></tr><tr>
+                <td >
+                    <div class="rashi-name">धनु</div>
+                    <div class="house-num">भाव 4</div>
+                    <div class="planets"></div>
+                </td>
+                <td >
+                    <div class="rashi-name">वृश्चिक</div>
+                    <div class="house-num">भाव 3</div>
+                    <div class="planets">☊(व) </div>
+                </td>
+                <td >
+                    <div class="rashi-name">तुला</div>
+                    <div class="house-num">भाव 2</div>
+                    <div class="planets">☉ ♂ ☿ ♃ </div>
+                </td>
+                <td class="lagna-house">
+                    <div class="rashi-name">कन्या</div>
+                    <div class="house-num">भाव 1</div>
+                    <div class="planets">♀ </div>
+                </td></tr></table></div>
+            <p style="text-align: center; color: #666; margin-top: 10px;">
+                (व) = वक्री (Retrograde) | पीला बॉक्स = लग्न भाव
+            </p>
+        </div>
+
+        <!-- Bhava Chart Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🏠</span> भाव चार्ट (House Chart)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>भाव</th>
+                        <th>राशि</th>
+                        <th>ग्रह</th>
+                        <th>महत्व</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+        <tr>
+            <td><strong>1</strong> (Lagna)</td>
+            <td>कन्या</td>
+            <td>♀ शुक्र</td>
+            <td>आत्म, व्यक्तित्व, शरीर</td>
+        </tr>
+        <tr>
+            <td><strong>2</strong> (Dhana)</td>
+            <td>तुला</td>
+            <td>☉ सूर्य, ♂ मंगल, ☿ बुध, ♃ गुरु</td>
+            <td>धन, परिवार, वाणी</td>
+        </tr>
+        <tr>
+            <td><strong>3</strong> (Sahaja)</td>
+            <td>वृश्चिक</td>
+            <td>☊ राहु</td>
+            <td>भाई-बहन, साहस, संचार</td>
+        </tr>
+        <tr>
+            <td><strong>4</strong> (Sukha)</td>
+            <td>धनु</td>
+            <td>-</td>
+            <td>माता, घर, सुख, वाहन</td>
+        </tr>
+        <tr>
+            <td><strong>5</strong> (Putra)</td>
+            <td>मकर</td>
+            <td>♄ शनि</td>
+            <td>संतान, बुद्धि, शिक्षा</td>
+        </tr>
+        <tr>
+            <td><strong>6</strong> (Ari)</td>
+            <td>कुंभ</td>
+            <td>☽ चंद्र</td>
+            <td>शत्रु, रोग, ऋण</td>
+        </tr>
+        <tr>
+            <td><strong>7</strong> (Yuvati)</td>
+            <td>मीन</td>
+            <td>-</td>
+            <td>विवाह, साझेदारी</td>
+        </tr>
+        <tr>
+            <td><strong>8</strong> (Randhra)</td>
+            <td>मेष</td>
+            <td>-</td>
+            <td>आयु, बाधाएं, रहस्य</td>
+        </tr>
+        <tr>
+            <td><strong>9</strong> (Dharma)</td>
+            <td>वृषभ</td>
+            <td>☋ केतु</td>
+            <td>भाग्य, पिता, धर्म</td>
+        </tr>
+        <tr>
+            <td><strong>10</strong> (Karma)</td>
+            <td>मिथुन</td>
+            <td>-</td>
+            <td>करियर, कर्म, यश</td>
+        </tr>
+        <tr>
+            <td><strong>11</strong> (Labha)</td>
+            <td>कर्क</td>
+            <td>-</td>
+            <td>लाभ, आय, मित्र</td>
+        </tr>
+        <tr>
+            <td><strong>12</strong> (Vyaya)</td>
+            <td>सिंह</td>
+            <td>-</td>
+            <td>व्यय, मोक्ष, विदेश</td>
+        </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Planet Positions Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🌟</span> ग्रह स्थिति (Planetary Positions)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ग्रह</th>
+                        <th>राशि</th>
+                        <th>अंश</th>
+                        <th>नक्षत्र</th>
+                        <th>भाव</th>
+                        <th>स्थिति</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+        <tr>
+            <td>☉ सूर्य</td>
+            <td>तुला</td>
+            <td>7.81°</td>
+            <td>Swati पाद 1</td>
+            <td>2</td>
+            <td class="status-good">मार्गी</td>
+        </tr>
+        <tr>
+            <td>☽ चंद्र</td>
+            <td>कुंभ</td>
+            <td>7.46°</td>
+            <td>Shatabhisha पाद 1</td>
+            <td>6</td>
+            <td class="status-good">मार्गी</td>
+        </tr>
+        <tr>
+            <td>♂ मंगल</td>
+            <td>तुला</td>
+            <td>25.42°</td>
+            <td>Vishakha पाद 2</td>
+            <td>2</td>
+            <td class="status-good">मार्गी</td>
+        </tr>
+        <tr>
+            <td>☿ बुध</td>
+            <td>तुला</td>
+            <td>28.68°</td>
+            <td>Vishakha पाद 3</td>
+            <td>2</td>
+            <td class="status-good">मार्गी</td>
+        </tr>
+        <tr>
+            <td>♃ गुरु</td>
+            <td>तुला</td>
+            <td>2.71°</td>
+            <td>Chitra पाद 3</td>
+            <td>2</td>
+            <td class="status-good">मार्गी</td>
+        </tr>
+        <tr>
+            <td>♀ शुक्र</td>
+            <td>कन्या</td>
+            <td>17.38°</td>
+            <td>Hasta पाद 3</td>
+            <td>1</td>
+            <td class="status-good">मार्गी</td>
+        </tr>
+        <tr>
+            <td>♄ शनि</td>
+            <td>मकर</td>
+            <td>29.87°</td>
+            <td>Dhanishta पाद 2</td>
+            <td>5</td>
+            <td class="status-good">मार्गी</td>
+        </tr>
+        <tr>
+            <td>☊ राहु</td>
+            <td>वृश्चिक</td>
+            <td>9.76°</td>
+            <td>Anuradha पाद 2</td>
+            <td>3</td>
+            <td class="status-caution">वक्री</td>
+        </tr>
+        <tr>
+            <td>☋ केतु</td>
+            <td>वृषभ</td>
+            <td>9.76°</td>
+            <td>Krittika पाद 4</td>
+            <td>9</td>
+            <td class="status-caution">वक्री</td>
+        </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Career Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">💼</span> करियर एवं व्यवसाय (Career Analysis)</h2>
+            
+    <div class="prediction-card">
+        <h3>लग्न आधारित करियर विश्लेषण</h3>
+        <p><strong>लग्न राशि:</strong> कन्या</p>
+        <p><strong>उपयुक्त क्षेत्र:</strong> चिकित्सा, लेखा, विश्लेषण, संपादन, गुणवत्ता नियंत्रण</p>
+    </div>
+
+    <div class="prediction-card">
+        <h3>दशम भाव (करियर स्थान) - मिथुन</h3>
+    <p>दशम भाव खाली है - दशमेश की स्थिति महत्वपूर्ण है।</p></div>
+        <div class="highlight-box success">
+            <h3>🌟 विशेष धन योग - द्वितीय भाव में 4 ग्रह!</h3>
+            <p>यह बहुत शक्तिशाली योग है जो Multiple Income Sources देता है:</p>
+            <ul>
+        <li><strong>सूर्य:</strong> पैतृक संपत्ति से लाभ। वाणी में अधिकार।</li><li><strong>मंगल:</strong> वाणी में तीखापन। धन कमाने में सक्षम।</li><li><strong>बुध:</strong> वाणी मधुर। लेखन से धन।</li><li><strong>गुरु:</strong> धनवान परिवार। वाणी प्रभावशाली।</li></ul></div>
+    <div class="prediction-card">
+        <h3>करियर समय विश्लेषण</h3>
+        <p><strong>वर्तमान Jupiter महादशा:</strong> भाग्योदय। गुरुकृपा। धन लाभ। संतान सुख। विवाह योग।</p>
+
+        <h4>करियर भविष्यवाणी:</h4>
+        <ul>
+            <li><span class="status-good">✅</span> IT/Software Development - बहुत अनुकूल</li>
+            <li><span class="status-good">✅</span> Data Science/Analytics - बहुत अनुकूल</li>
+            <li><span class="status-good">✅</span> Finance/Banking - अनुकूल</li>
+            <li><span class="status-good">✅</span> Teaching/Training - अनुकूल</li>
+            <li><span class="status-warning">⚠️</span> Government Job - संभव लेकिन प्रयास अधिक</li>
+        </ul>
+    </div>
+    
+        </div>
+
+        <!-- Marriage Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">💑</span> विवाह एवं दाम्पत्य (Marriage Analysis)</h2>
+            
+    <div class="prediction-card">
+        <h3>सप्तम भाव (विवाह स्थान) - मीन</h3>
+        <p>जीवनसाथी आध्यात्मिक, कलात्मक और भावुक होगा।</p>
+    </div>
+        <div class="prediction-card">
+            <h3>शुक्र (विवाह कारक) - भाव 1</h3>
+            <p>सुंदर और आकर्षक। कला में निपुण।</p>
+        </div>
+        
+    <div class="prediction-card">
+        <h3>विवाह समय विश्लेषण</h3>
+        <table>
+            <tr><th>दशा</th><th>समय</th><th>संभावना</th></tr>
+            <tr><td>गुरु-शनि</td><td>2024-2027</td><td class="status-good">उच्च</td></tr>
+            <tr><td>शनि-शनि</td><td>2026-2029</td><td class="status-good">अनुकूल</td></tr>
+            <tr><td>शनि-बुध</td><td>2029-2032</td><td class="status-good">अनुकूल</td></tr>
+        </table>
+
+        <h4>विवाह भविष्यवाणी:</h4>
+        <ul>
+            <li><span class="status-good">✅</span> विवाह योग अच्छा है</li>
+            <li><span class="status-good">✅</span> जीवनसाथी शिक्षित और समझदार होगा/होगी</li>
+            <li><span class="status-good">✅</span> Family-oriented relationship</li>
+            <li><span class="status-warning">⚠️</span> 6th में चंद्र - कभी-कभी मानसिक तनाव संभव</li>
+            <li><span class="status-good">💡</span> सुझाव: Communication बनाए रखें</li>
+        </ul>
+    </div>
+    
+        </div>
+
+        <!-- Children Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">👶</span> संतान (Children Analysis)</h2>
+            
+    <div class="prediction-card">
+        <h3>पंचम भाव (संतान स्थान) - मकर</h3>
+        <p>संतान मेहनती और अनुशासित होगी। देर से सफलता।</p>
+    <h4>पंचम भाव में ग्रह:</h4><ul><li><strong>शनि:</strong> संतान में देरी। गंभीर स्वभाव।</li></ul>
+    </div>
+
+    <div class="prediction-card">
+        <h3>संतान भविष्यवाणी</h3>
+        <ul>
+            <li><span class="status-warning">⏰</span> पहली संतान में थोड़ी देरी (शनि 5th में)</li>
+            <li><span class="status-good">✅</span> संतान बुद्धिमान और जिम्मेदार होगी</li>
+            <li><span class="status-good">✅</span> Career-oriented children</li>
+            <li><span class="status-good">💡</span> Best time: शनि महादशा के बाद (2030+)</li>
+        </ul>
+    </div>
+    
+        </div>
+
+        <!-- Health Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🏥</span> स्वास्थ्य (Health Analysis)</h2>
+            
+    <div class="prediction-card">
+        <h3>लग्न आधारित स्वास्थ्य</h3>
+        <p><strong>कन्या लग्न:</strong> आंत, पाचन और तनाव का ध्यान रखें। चिंता कम करें।</p>
+    </div>
+
+    <div class="prediction-card">
+        <h3>स्वास्थ्य संवेदनशील क्षेत्र</h3>
+        <table>
+            <tr><th>अंग/क्षेत्र</th><th>सावधानी</th></tr>
+            <tr><td>पेट/आंतें</td><td>पाचन तंत्र का ध्यान रखें</td></tr>
+            <tr><td>नर्वस सिस्टम</td><td>Stress management जरूरी</td></tr>
+            <tr><td>त्वचा</td><td>Skin allergies संभव</td></tr>
+            <tr><td>मानसिक स्वास्थ्य</td><td>6th में चंद्र - तनाव से बचें</td></tr>
+        </table>
+    </div>
+    <div class="prediction-card"><h3>षष्ठ भाव (रोग स्थान) में ग्रह</h3><ul><li><strong>चंद्र:</strong> मानसिक तनाव से बचें। पाचन का ध्यान रखें।</li></ul></div>
+    <div class="highlight-box">
+        <h3>🧘 स्वास्थ्य सुझाव</h3>
+        <ul>
+            <li>योग और ध्यान नियमित करें (6th चंद्र के लिए)</li>
+            <li>पाचन के लिए हल्का भोजन (कन्या लग्न)</li>
+            <li>पानी पर्याप्त पिएं</li>
+            <li>तनाव कम करें - meditation</li>
+            <li>Regular exercise (मंगल को शांत करने के लिए)</li>
+        </ul>
+    </div>
+    
+        </div>
+
+        <!-- Wealth Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">💰</span> धन एवं संपत्ति (Wealth Analysis)</h2>
+            
+    <div class="prediction-card">
+        <h3>द्वितीय भाव (धन स्थान)</h3>
+    
+        <div class="highlight-box success">
+            <strong>🌟 4 ग्रह धन भाव में - उत्तम धन योग!</strong>
+        </div>
+        <table>
+            <tr><th>ग्रह</th><th>धन स्रोत</th></tr>
+        <tr><td>सूर्य</td><td>Government, Authority positions</td></tr><tr><td>मंगल</td><td>Technical work, Property, Real Estate</td></tr><tr><td>बुध</td><td>Business, Communication, IT</td></tr><tr><td>गुरु</td><td>Teaching, Consulting, Finance, Law</td></tr></table>
+    </div>
+
+    <div class="prediction-card">
+        <h3>धन भविष्यवाणी</h3>
+        <ul>
+            <li><span class="status-good">💰</span> Multiple income sources संभव</li>
+            <li><span class="status-good">📈</span> 30+ उम्र के बाद income बढ़ेगी</li>
+            <li><span class="status-good">🏠</span> Property से लाभ (शनि 5th + मंगल 2nd)</li>
+            <li><span class="status-good">💼</span> Side business से extra income</li>
+            <li><span class="status-warning">⚠️</span> खर्चों पर नियंत्रण रखें (6th चंद्र)</li>
+        </ul>
+    </div>
+    
+        </div>
+
+        <!-- Dasha Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">📅</span> दशा विश्लेषण (Dasha Analysis)</h2>
+            
+    <div class="prediction-card">
+        <h3>वर्तमान दशा</h3>
+        <table>
+            <tr><th>स्तर</th><th>ग्रह</th><th>आरंभ</th><th>समाप्ति</th></tr>
+            <tr class="current">
+                <td>महादशा</td>
+                <td><strong>Jupiter</strong></td>
+                <td>28-09-2010</td>
+                <td>28-09-2026</td>
+            </tr>
+            <tr>
+                <td>अंतर्दशा</td>
+                <td>Rahu</td>
+                <td>05-05-2024</td>
+                <td>28-09-2026</td>
+            </tr>
+            <tr>
+                <td>प्रत्यंतर्दशा</td>
+                <td>Moon</td>
+                <td>27-05-2026</td>
+                <td>08-08-2026</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="prediction-card">
+        <h3>महादशा क्रम (Timeline)</h3>
+        <div class="timeline">
+    
+        <div class="timeline-item">
+            <strong>Rahu महादशा</strong><br>
+            25-10-1993 से 28-09-2010<br>
+            <small>अवधि: 16.9 वर्ष</small><br>
+            <small>अचानक परिवर्तन। विदेश योग। अपारंपरिक सफलता।</small>
+        </div>
+        
+        <div class="timeline-item current">
+            <strong>Jupiter महादशा ← वर्तमान</strong><br>
+            28-09-2010 से 28-09-2026<br>
+            <small>अवधि: 16.0 वर्ष</small><br>
+            <small>भाग्योदय। गुरुकृपा। धन लाभ। संतान सुख। विवाह योग।</small>
+        </div>
+        
+        <div class="timeline-item">
+            <strong>Saturn महादशा</strong><br>
+            28-09-2026 से 28-09-2045<br>
+            <small>अवधि: 19.0 वर्ष</small><br>
+            <small>मेहनत का फल मिलेगा। धैर्य रखें। अनुशासन से सफलता।</small>
+        </div>
+        
+        <div class="timeline-item">
+            <strong>Mercury महादशा</strong><br>
+            28-09-2045 से 28-09-2062<br>
+            <small>अवधि: 17.0 वर्ष</small><br>
+            <small>व्यापार में लाभ। शिक्षा में सफलता। संचार कौशल।</small>
+        </div>
+        
+        <div class="timeline-item">
+            <strong>Ketu महादशा</strong><br>
+            28-09-2062 से 28-09-2069<br>
+            <small>अवधि: 7.0 वर्ष</small><br>
+            <small>आध्यात्मिक उन्नति। मोक्ष की ओर। भौतिक वस्तुओं से विरक्ति।</small>
+        </div>
+        
+        <div class="timeline-item">
+            <strong>Venus महादशा</strong><br>
+            28-09-2069 से 28-09-2089<br>
+            <small>अवधि: 20.0 वर्ष</small><br>
+            <small>विवाह योग। वाहन सुख। कला में सफलता। प्रेम संबंध।</small>
+        </div>
+        
+        <div class="timeline-item">
+            <strong>Sun महादशा</strong><br>
+            28-09-2089 से 29-09-2095<br>
+            <small>अवधि: 6.0 वर्ष</small><br>
+            <small>सरकारी कार्यों में सफलता। पिता से लाभ। आत्मविश्वास बढ़ेगा।</small>
+        </div>
+        
+        </div>
+    </div>
+
+    <div class="prediction-card">
+        <h3>शनि महादशा (2026-2045) - विस्तृत विश्लेषण</h3>
+        <p><strong>शनि मकर में (स्वराशि)</strong> - यह आपका Golden Period होगा!</p>
+        <table>
+            <tr><th>अंतर्दशा</th><th>समय</th><th>प्रभाव</th></tr>
+            <tr><td>शनि-शनि</td><td>2026-2029</td><td>Foundation building, stability</td></tr>
+            <tr><td>शनि-बुध</td><td>2029-2032</td><td>Business opportunities, IT growth</td></tr>
+            <tr><td>शनि-केतु</td><td>2032-2035</td><td>Spiritual growth, Foreign connections</td></tr>
+            <tr class="current"><td>शनि-शुक्र</td><td>2035-2038</td><td><strong>सबसे अच्छा समय!</strong> Wealth & Comfort</td></tr>
+            <tr><td>शनि-सूर्य</td><td>2038-2041</td><td>Authority positions, Recognition</td></tr>
+        </table>
+    </div>
+    
+        </div>
+
+        <!-- Special Yogas Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🔮</span> विशेष योग (Special Yogas)</h2>
+            
+    <div class="yoga-grid">
+        <div class="yoga-card">
+            <h4>✅ बुधादित्य योग</h4>
+            <p><strong>सूर्य + बुध</strong> एक साथ द्वितीय भाव में</p>
+            <ul>
+                <li>बुद्धि और वाणी में निपुणता</li>
+                <li>Business acumen</li>
+                <li>Good communication skills</li>
+            </ul>
+        </div>
+
+        <div class="yoga-card">
+            <h4>✅ गुरु-मंगल योग</h4>
+            <p><strong>गुरु + मंगल</strong> द्वितीय भाव में</p>
+            <ul>
+                <li>Wealth accumulation</li>
+                <li>Property योग</li>
+                <li>Bold decisions में सफलता</li>
+            </ul>
+        </div>
+
+        <div class="yoga-card">
+            <h4>✅ शनि स्वराशि योग</h4>
+            <p><strong>शनि मकर</strong> में (Own sign)</p>
+            <ul>
+                <li>Long-term success</li>
+                <li>Discipline से सफलता</li>
+                <li>Real estate लाभ</li>
+            </ul>
+        </div>
+
+        <div class="yoga-card">
+            <h4>✅ शुक्र लग्न योग</h4>
+            <p><strong>शुक्र</strong> लग्न भाव में</p>
+            <ul>
+                <li>Attractive personality</li>
+                <li>Artistic abilities</li>
+                <li>Good relationships</li>
+            </ul>
+        </div>
+    </div>
+    
+        </div>
+
+        <!-- Summary Section -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">📝</span> सारांश एवं सुझाव (Summary & Recommendations)</h2>
+            
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="title">करियर</div>
+            <div class="rating">⭐⭐⭐⭐</div>
+            <div>IT/Finance में उत्तम</div>
+        </div>
+        <div class="summary-card">
+            <div class="title">विवाह</div>
+            <div class="rating">⭐⭐⭐⭐</div>
+            <div>2024-2027 शुभ</div>
+        </div>
+        <div class="summary-card">
+            <div class="title">संतान</div>
+            <div class="rating">⭐⭐⭐</div>
+            <div>देरी लेकिन शुभ</div>
+        </div>
+        <div class="summary-card">
+            <div class="title">स्वास्थ्य</div>
+            <div class="rating">⭐⭐⭐</div>
+            <div>Mental health ध्यान</div>
+        </div>
+        <div class="summary-card">
+            <div class="title">धन</div>
+            <div class="rating">⭐⭐⭐⭐⭐</div>
+            <div>4 ग्रह धन भाव में!</div>
+        </div>
+    </div>
+
+    <div class="highlight-box success">
+        <h3>🎯 मुख्य सुझाव</h3>
+        <ol>
+            <li><strong>शनि महादशा (2026+)</strong> आपके लिए golden period होगा</li>
+            <li><strong>IT/Software</strong> में रहें - बहुत अनुकूल</li>
+            <li><strong>Meditation</strong> करें - 6th चंद्र को शांत करने के लिए</li>
+            <li><strong>Property investment</strong> करें - शनि + मंगल का योग</li>
+            <li><strong>2035-2038</strong> सबसे अच्छा समय (शनि-शुक्र)</li>
+        </ol>
+    </div>
+
+    <div class="prediction-card">
+        <h3>🔮 शुभ तत्व</h3>
+        <table>
+            <tr><th>तत्व</th><th>शुभ</th></tr>
+            <tr><td>शुभ रंग</td><td>हरा, हल्का पीला</td></tr>
+            <tr><td>शुभ अंक</td><td>5, 14, 23</td></tr>
+            <tr><td>शुभ दिन</td><td>बुधवार</td></tr>
+            <tr><td>शुभ रत्न</td><td>पन्ना (Emerald)</td></tr>
+            <tr><td>शुभ धातु</td><td>कांसा</td></tr>
+            <tr><td>शुभ दिशा</td><td>उत्तर</td></tr>
+        </table>
+    </div>
+
+    <div class="prediction-card">
+        <h3>🙏 उपाय एवं मंत्र</h3>
+        <ul>
+            <li><strong>बुध मंत्र:</strong> ॐ बुं बुधाय नमः (Mercury - लग्नेश)</li>
+            <li><strong>शनि मंत्र:</strong> ॐ शं शनैश्चराय नमः (Saturn - 5th lord)</li>
+            <li><strong>गुरु मंत्र:</strong> ॐ गुरवे नमः (Jupiter - 7th lord)</li>
+            <li>बुधवार को हरे रंग के वस्त्र पहनें</li>
+            <li>शनिवार को हनुमान जी की पूजा करें</li>
+            <li>गुरुवार को गुरु की पूजा करें</li>
+        </ul>
+    </div>
+    
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="section">
+            <div class="disclaimer">
+                <strong>⚠️ अस्वीकरण (Disclaimer):</strong><br>
+                यह कुंडली केवल सूचनात्मक उद्देश्यों के लिए है। ज्योतिष एक प्राचीन विद्या है और इसके परिणाम व्यक्ति के कर्मों पर भी निर्भर करते हैं।
+                महत्वपूर्ण निर्णयों के लिए किसी अनुभवी ज्योतिषी से परामर्श लें।<br><br>
+                <strong>सटीकता (Accuracy):</strong> यह सॉफ्टवेयर Swiss Ephemeris (NASA JPL DE431) पर आधारित है
+                जो 0.001 arc-second की सटीकता प्रदान करता है - जो ज्योतिषीय गणनाओं के लिए 99.99%+ सटीक है।
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p style="font-size: 1.5em;">🙏 शुभम् भवतु 🙏</p>
+            <p>Generated: 26-06-2026 00:28</p>
+            <p>Powered by Swiss Ephemeris (NASA JPL DE431)</p>
+            <p>Kundali Software v1.1 | 99.9%+ Accuracy</p>
+        </div>
+    </div>
+</body>
+</html>

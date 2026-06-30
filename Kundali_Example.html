@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>जन्म कुंडली - Rahul Sharma</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Devanagari', 'Mangal', sans-serif;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe4c4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header .om {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .birth-details {
+            background: #fff8f0;
+            padding: 25px;
+            border-bottom: 3px solid #ff6b35;
+        }
+
+        .birth-details h2 {
+            color: #ff6b35;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .birth-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .birth-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ff6b35;
+        }
+
+        .birth-item label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .birth-item value {
+            display: block;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .section {
+            padding: 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section h2 {
+            color: #ff6b35;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff6b35;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 .icon {
+            font-size: 1.5em;
+        }
+
+        /* Kundali Chart */
+        .kundali-chart {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .chart-container {
+            width: 400px;
+            height: 400px;
+            position: relative;
+        }
+
+        .chart-box {
+            position: absolute;
+            border: 2px solid #8b4513;
+            background: #fffaf0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            padding: 5px;
+        }
+
+        .chart-box .house-num {
+            position: absolute;
+            top: 2px;
+            left: 5px;
+            font-size: 0.7em;
+            color: #8b4513;
+            font-weight: bold;
+        }
+
+        .chart-box .rashi {
+            color: #ff6b35;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .chart-box .planets {
+            color: #333;
+            font-size: 0.75em;
+            text-align: center;
+            margin-top: 3px;
+        }
+
+        /* North Indian Chart positions */
+        .box-1 { top: 100px; left: 100px; width: 100px; height: 100px; }
+        .box-2 { top: 0; left: 100px; width: 100px; height: 100px; }
+        .box-3 { top: 0; left: 200px; width: 100px; height: 100px; }
+        .box-4 { top: 100px; left: 200px; width: 100px; height: 100px; }
+        .box-5 { top: 200px; left: 200px; width: 100px; height: 100px; }
+        .box-6 { top: 300px; left: 200px; width: 100px; height: 100px; }
+        .box-7 { top: 300px; left: 100px; width: 100px; height: 100px; }
+        .box-8 { top: 300px; left: 0; width: 100px; height: 100px; }
+        .box-9 { top: 200px; left: 0; width: 100px; height: 100px; }
+        .box-10 { top: 100px; left: 0; width: 100px; height: 100px; }
+        .box-11 { top: 0; left: 0; width: 100px; height: 100px; }
+        .box-12 { top: 0; left: 200px; width: 100px; height: 100px; transform: translateX(100px); }
+
+        /* Diamond style chart */
+        .diamond-chart {
+            width: 400px;
+            height: 400px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .diamond-chart .center {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 200px;
+            height: 200px;
+            border: 2px solid #8b4513;
+            transform: rotate(45deg);
+            background: #fffaf0;
+        }
+
+        /* Planet Table */
+        .planet-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .planet-table th {
+            background: #ff6b35;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .planet-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .planet-table tr:nth-child(even) {
+            background: #fff8f0;
+        }
+
+        .planet-table tr:hover {
+            background: #ffe4c4;
+        }
+
+        .retrograde {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* Dasha Table */
+        .dasha-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dasha-table th {
+            background: #8b4513;
+            color: white;
+            padding: 10px;
+        }
+
+        .dasha-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .current-dasha {
+            background: #fff3cd !important;
+            font-weight: bold;
+        }
+
+        /* Prediction Cards */
+        .prediction-card {
+            background: linear-gradient(135deg, #fff8f0 0%, #ffe4c4 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #ff6b35;
+        }
+
+        .prediction-card h3 {
+            color: #8b4513;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .prediction-card p {
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .prediction-card strong {
+            color: #ff6b35;
+        }
+
+        /* Footer */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            opacity: 0.8;
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #856404;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="om">ॐ</div>
+            <h1>श्री गणेशाय नमः</h1>
+            <h1>जन्म कुंडली</h1>
+            <p class="subtitle">Rahul Sharma</p>
+        </div>
+
+        <!-- Birth Details -->
+        <div class="birth-details">
+            <h2>🪔 जन्म विवरण</h2>
+            <div class="birth-grid">
+                <div class="birth-item">
+                    <label>नाम</label>
+                    <value>Rahul Sharma</value>
+                </div>
+                <div class="birth-item">
+                    <label>जन्म तिथि एवं समय</label>
+                    <value>1990-05-15 10:30:00 IST</value>
+                </div>
+                <div class="birth-item">
+                    <label>जन्म स्थान</label>
+                    <value>Delhi</value>
+                </div>
+                <div class="birth-item">
+                    <label>अक्षांश-देशांतर</label>
+                    <value>28.6139°N, 77.2090°E</value>
+                </div>
+                <div class="birth-item">
+                    <label>लग्न राशि</label>
+                    <value>Karka (Cancer)</value>
+                </div>
+                <div class="birth-item">
+                    <label>चंद्र राशि</label>
+                    <value>Dhanu</value>
+                </div>
+                <div class="birth-item">
+                    <label>जन्म नक्षत्र</label>
+                    <value>Uttara Ashadha - पाद 1</value>
+                </div>
+                <div class="birth-item">
+                    <label>सूर्य राशि</label>
+                    <value>Vrishabha</value>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kundali Chart -->
+        <div class="section">
+            <h2><span class="icon">📊</span> लग्न कुंडली</h2>
+            
+    <div style="display: flex; justify-content: center; margin: 20px 0;">
+        <table style="border-collapse: collapse; width: 360px; height: 360px;">
+    <tr>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">मीन</div>
+                    <div style="font-size: 10px; color: #666;">भाव 9</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;">♀ </div>
+                </td>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">मेष</div>
+                    <div style="font-size: 10px; color: #666;">भाव 10</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;">☿ </div>
+                </td>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">वृषभ</div>
+                    <div style="font-size: 10px; color: #666;">भाव 11</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;">☉ </div>
+                </td>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">मिथुन</div>
+                    <div style="font-size: 10px; color: #666;">भाव 12</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;">♃ </div>
+                </td></tr><tr>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">कुंभ</div>
+                    <div style="font-size: 10px; color: #666;">भाव 8</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;">♂ </div>
+                </td><td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                                background: linear-gradient(135deg, #fff8dc, #ffe4b5);"></td><td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                                background: linear-gradient(135deg, #fff8dc, #ffe4b5);"></td>
+                <td style="border: 3px solid #ff6b35; width: 90px; height: 90px;
+                    background: #fff3cd; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">कर्क</div>
+                    <div style="font-size: 10px; color: #666;">भाव 1</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;">☋(व) </div>
+                </td></tr><tr>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">मकर</div>
+                    <div style="font-size: 10px; color: #666;">भाव 7</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;">♄ ☊(व) </div>
+                </td><td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                                background: linear-gradient(135deg, #fff8dc, #ffe4b5);"></td><td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                                background: linear-gradient(135deg, #fff8dc, #ffe4b5);"></td>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">सिंह</div>
+                    <div style="font-size: 10px; color: #666;">भाव 2</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;"></div>
+                </td></tr><tr>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">धनु</div>
+                    <div style="font-size: 10px; color: #666;">भाव 6</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;">☽ </div>
+                </td>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">वृश्चिक</div>
+                    <div style="font-size: 10px; color: #666;">भाव 5</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;"></div>
+                </td>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">तुला</div>
+                    <div style="font-size: 10px; color: #666;">भाव 4</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;"></div>
+                </td>
+                <td style="border: 2px solid #8b4513; width: 90px; height: 90px;
+                    background: #fffaf0; vertical-align: top; padding: 5px; font-size: 12px;">
+                    <div style="color: #8b4513; font-weight: bold;">कन्या</div>
+                    <div style="font-size: 10px; color: #666;">भाव 3</div>
+                    <div style="color: #333; margin-top: 5px; font-size: 14px;"></div>
+                </td></tr>
+        </table>
+    </div>
+    <p style="text-align: center; color: #666; font-size: 0.9em;">
+        (व) = वक्री (Retrograde) | पीला बॉक्स = लग्न भाव
+    </p>
+    
+        </div>
+
+        <!-- Planet Positions -->
+        <div class="section">
+            <h2><span class="icon">🌟</span> ग्रह स्थिति</h2>
+            <table class="planet-table">
+                <thead>
+                    <tr>
+                        <th>ग्रह</th>
+                        <th>राशि</th>
+                        <th>अंश</th>
+                        <th>नक्षत्र</th>
+                        <th>भाव</th>
+                        <th>स्थिति</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+        <tr>
+            <td>☉ सूर्य</td>
+            <td>Vrishabha</td>
+            <td>0.39°</td>
+            <td>Krittika (पाद 2)</td>
+            <td>11</td>
+            <td >मार्गी</td>
+        </tr>
+        
+        <tr>
+            <td>☽ चंद्र</td>
+            <td>Dhanu</td>
+            <td>29.84°</td>
+            <td>Uttara Ashadha (पाद 1)</td>
+            <td>6</td>
+            <td >मार्गी</td>
+        </tr>
+        
+        <tr>
+            <td>♂ मंगल</td>
+            <td>Kumbha</td>
+            <td>24.39°</td>
+            <td>Purva Bhadrapada (पाद 2)</td>
+            <td>8</td>
+            <td >मार्गी</td>
+        </tr>
+        
+        <tr>
+            <td>☿ बुध</td>
+            <td>Mesha</td>
+            <td>14.32°</td>
+            <td>Bharani (पाद 1)</td>
+            <td>10</td>
+            <td >मार्गी</td>
+        </tr>
+        
+        <tr>
+            <td>♃ गुरु</td>
+            <td>Mithuna</td>
+            <td>15.76°</td>
+            <td>Ardra (पाद 3)</td>
+            <td>12</td>
+            <td >मार्गी</td>
+        </tr>
+        
+        <tr>
+            <td>♀ शुक्र</td>
+            <td>Meena</td>
+            <td>18.76°</td>
+            <td>Revati (पाद 1)</td>
+            <td>9</td>
+            <td >मार्गी</td>
+        </tr>
+        
+        <tr>
+            <td>♄ शनि</td>
+            <td>Makara</td>
+            <td>1.53°</td>
+            <td>Uttara Ashadha (पाद 2)</td>
+            <td>7</td>
+            <td >मार्गी</td>
+        </tr>
+        
+        <tr>
+            <td>☊ राहु</td>
+            <td>Makara</td>
+            <td>16.53°</td>
+            <td>Shravana (पाद 2)</td>
+            <td>7</td>
+            <td class="retrograde">वक्री</td>
+        </tr>
+        
+        <tr>
+            <td>☋ केतु</td>
+            <td>Karka</td>
+            <td>16.53°</td>
+            <td>Pushya (पाद 4)</td>
+            <td>1</td>
+            <td class="retrograde">वक्री</td>
+        </tr>
+        
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Current Dasha -->
+        <div class="section">
+            <h2><span class="icon">⏰</span> वर्तमान दशा</h2>
+            <div class="prediction-card">
+                <h3>चल रही दशा: Rahu-Venus-Ketu</h3>
+                <p><strong>महादशा:</strong> Rahu
+                   (10-12-2011 से
+                    09-12-2029 तक)</p>
+                <p><strong>अंतर्दशा:</strong> Venus
+                   (28-06-2023 से
+                    28-06-2026 तक)</p>
+                <p><strong>प्रत्यंतर्दशा:</strong> Ketu</p>
+            </div>
+            <div class="prediction-card"><p><strong>वर्तमान महादशा (Rahu):<strong> अचानक परिवर्तन। विदेश योग। अपारंपरिक सफलता।</p><p><strong>वर्तमान अंतर्दशा (Venus):<strong> विवाह योग। वाहन सुख। कला में सफलता। प्रेम संबंध।</p></div>
+        </div>
+
+        <!-- Mahadasha Timeline -->
+        <div class="section">
+            <h2><span class="icon">📅</span> महादशा क्रम</h2>
+            <table class="dasha-table">
+                <thead>
+                    <tr>
+                        <th>महादशा</th>
+                        <th>आरंभ तिथि</th>
+                        <th>समाप्ति तिथि</th>
+                        <th>अवधि (वर्ष)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+        <tr >
+            <td>Sun</td>
+            <td>15-05-1990</td>
+            <td>09-12-1994</td>
+            <td>4.6</td>
+        </tr>
+        
+        <tr >
+            <td>Moon</td>
+            <td>09-12-1994</td>
+            <td>09-12-2004</td>
+            <td>10.0</td>
+        </tr>
+        
+        <tr >
+            <td>Mars</td>
+            <td>09-12-2004</td>
+            <td>10-12-2011</td>
+            <td>7.0</td>
+        </tr>
+        
+        <tr class="current-dasha">
+            <td>Rahu</td>
+            <td>10-12-2011</td>
+            <td>09-12-2029</td>
+            <td>18.0</td>
+        </tr>
+        
+        <tr >
+            <td>Jupiter</td>
+            <td>09-12-2029</td>
+            <td>09-12-2045</td>
+            <td>16.0</td>
+        </tr>
+        
+        <tr >
+            <td>Saturn</td>
+            <td>09-12-2045</td>
+            <td>09-12-2064</td>
+            <td>19.0</td>
+        </tr>
+        
+        <tr >
+            <td>Mercury</td>
+            <td>09-12-2064</td>
+            <td>09-12-2081</td>
+            <td>17.0</td>
+        </tr>
+        
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Career Prediction -->
+        <div class="section">
+            <h2><span class="icon">💼</span> करियर एवं व्यवसाय</h2>
+            <div class="prediction-card"><p><strong>लग्न आधारित करियर:<strong> होटल, रेस्टोरेंट, नर्सिंग, रियल एस्टेट, जल संबंधी कार्य</p><h3>दशम भाव में ग्रह:</h3><p>• बुध: लेखन, पत्रकारिता, IT में सफलता।</p><p><strong>सूर्य की स्थिति (11वें भाव में):<strong> आय में वृद्धि। मित्रों से लाभ।</p></div>
+        </div>
+
+        <!-- Marriage Prediction -->
+        <div class="section">
+            <h2><span class="icon">💑</span> विवाह एवं दाम्पत्य</h2>
+            <div class="prediction-card"><p><strong>सप्तम भाव (Makara):<strong> जीवनसाथी गंभीर, मेहनती और व्यावहारिक होगा।</p><p><strong>शुक्र की स्थिति (9वें भाव में):<strong> विदेश यात्रा। धार्मिक पत्नी।</p><h3>सप्तम भाव में ग्रह:</h3><p>• शनि: विवाह में देरी। जीवनसाथी गंभीर।</p><p>• राहु: विदेशी जीवनसाथी। अंतरजातीय विवाह।</p></div>
+        </div>
+
+        <!-- Children Prediction -->
+        <div class="section">
+            <h2><span class="icon">👶</span> संतान</h2>
+            <div class="prediction-card"><p><strong>पंचम भाव (Vrishchika):<strong> संतान गहन और शोधकर्ता होगी। विज्ञान में रुचि।</p><p><strong>गुरु की स्थिति (12वें भाव में):<strong> मोक्ष की इच्छा। आश्रम में रुचि।</p></div>
+        </div>
+
+        <!-- Health Prediction -->
+        <div class="section">
+            <h2><span class="icon">🏥</span> स्वास्थ्य</h2>
+            <div class="prediction-card"><p><strong>लग्न आधारित स्वास्थ्य:<strong> पेट, छाती और पाचन तंत्र का ध्यान रखें। तनाव से बचें।</p><h3>षष्ठ भाव में ग्रह (रोग स्थान):</h3><p>• चंद्र: मानसिक तनाव से बचें। पाचन का ध्यान रखें।</p><h3>अष्टम भाव में ग्रह (आयु स्थान):</h3><p>• मंगल: दुर्घटना से सावधान। बीमा करवाएं।</p></div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="section">
+            <div class="disclaimer">
+                <strong>⚠️ अस्वीकरण:</strong> यह कुंडली केवल सूचनात्मक उद्देश्यों के लिए है।
+                ज्योतिष एक प्राचीन विद्या है और इसके परिणाम व्यक्ति के कर्मों पर भी निर्भर करते हैं।
+                महत्वपूर्ण निर्णयों के लिए किसी अनुभवी ज्योतिषी से परामर्श लें।
+                <br><br>
+                <strong>सटीकता:</strong> यह सॉफ्टवेयर Swiss Ephemeris (NASA JPL DE431) पर आधारित है
+                जो 0.001 arc-second की सटीकता प्रदान करता है।
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>🙏 शुभम् भवतु 🙏</p>
+            <p>Generated on: 26-06-2026 00:14</p>
+            <p>Powered by Swiss Ephemeris (NASA JPL DE431)</p>
+        </div>
+    </div>
+</body>
+</html>

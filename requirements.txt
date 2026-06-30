@@ -1,0 +1,27 @@
+# Kundali Software Dependencies
+# Swiss Ephemeris for high-accuracy planetary calculations (NASA JPL DE431 based)
+pyswisseph>=2.10.0
+
+# Web framework
+flask>=3.0.0
+
+# Date/time handling with timezone support
+pytz>=2024.1
+
+# Geolocation for birth place coordinates
+geopy>=2.4.0
+
+# Data validation
+pydantic>=2.0.0
+
+# CLI interface
+click>=8.1.0
+
+# For future GUI/web interface
+# streamlit>=1.30.0
+
+# Testing
+pytest>=8.0.0
+
+# PDF Generation
+reportlab>=4.0.0

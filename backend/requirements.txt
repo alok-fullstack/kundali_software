@@ -1,0 +1,13 @@
+# FastAPI Backend Requirements
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+python-multipart>=0.0.6
+
+# CORS and security
+python-jose[cryptography]>=3.3.0
+
+# The src/ folder dependencies (already installed via main requirements.txt)
+# pyswisseph>=2.10.3
+# geopy>=2.4.0
+# pytz>=2023.3
