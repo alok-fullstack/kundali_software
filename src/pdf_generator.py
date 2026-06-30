@@ -11,6 +11,7 @@ Uses ReportLab for PDF generation with traditional Vedic astrology styling.
 import io
 import os
 import urllib.request
+import urllib.error
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Tuple
@@ -62,20 +63,29 @@ def download_hindi_fonts():
         return True
 
     # Create fonts directory
-    FONTS_DIR.mkdir(exist_ok=True)
+    try:
+        FONTS_DIR.mkdir(parents=True, exist_ok=True)
+    except Exception as e:
+        print(f"Warning: Could not create fonts directory: {e}")
+        return False
 
     try:
-        # Download regular font
+        # Download regular font with timeout
         if not HINDI_FONT_PATH.exists():
             print("Downloading Noto Sans Devanagari Regular font...")
             urllib.request.urlretrieve(FONT_URLS["regular"], HINDI_FONT_PATH)
+            print("Regular font downloaded successfully")
 
-        # Download bold font
+        # Download bold font with timeout
         if not HINDI_FONT_BOLD_PATH.exists():
             print("Downloading Noto Sans Devanagari Bold font...")
             urllib.request.urlretrieve(FONT_URLS["bold"], HINDI_FONT_BOLD_PATH)
+            print("Bold font downloaded successfully")
 
         return True
+    except urllib.error.URLError as e:
+        print(f"Warning: Network error downloading fonts: {e}")
+        return False
     except Exception as e:
         print(f"Warning: Could not download Hindi fonts: {e}")
         return False
@@ -89,12 +99,11 @@ def register_hindi_fonts():
         return True
 
     # Try to download fonts first
-    if not download_hindi_fonts():
-        return False
+    download_hindi_fonts()
 
     try:
         # Register fonts with ReportLab
-        if HINDI_FONT_PATH.exists():
+        if HINDI_FONT_PATH.exists() and HINDI_FONT_BOLD_PATH.exists():
             pdfmetrics.registerFont(TTFont('NotoSansDevanagari', str(HINDI_FONT_PATH)))
             pdfmetrics.registerFont(TTFont('NotoSansDevanagari-Bold', str(HINDI_FONT_BOLD_PATH)))
 
@@ -108,14 +117,31 @@ def register_hindi_fonts():
             HINDI_FONT_REGISTERED = True
             print("Hindi fonts registered successfully!")
             return True
+        elif HINDI_FONT_PATH.exists():
+            # Only regular font available
+            pdfmetrics.registerFont(TTFont('NotoSansDevanagari', str(HINDI_FONT_PATH)))
+            pdfmetrics.registerFont(TTFont('NotoSansDevanagari-Bold', str(HINDI_FONT_PATH)))
+            pdfmetrics.registerFontFamily(
+                'NotoSansDevanagari',
+                normal='NotoSansDevanagari',
+                bold='NotoSansDevanagari-Bold'
+            )
+            HINDI_FONT_REGISTERED = True
+            print("Hindi fonts registered (regular only)!")
+            return True
+        else:
+            print("Hindi fonts not available, using Helvetica fallback")
+            return False
     except Exception as e:
         print(f"Warning: Could not register Hindi fonts: {e}")
+        return False
 
-    return False
 
-
-# Register fonts on module load
-register_hindi_fonts()
+# Try to register fonts on module load (non-blocking)
+try:
+    register_hindi_fonts()
+except Exception as e:
+    print(f"Font registration skipped: {e}")
 
 
 # =============================================================================

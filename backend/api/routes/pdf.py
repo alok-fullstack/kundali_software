@@ -227,9 +227,20 @@ async def download_kundali_pdf(kundali_id: str):
     try:
         # Get the kundali
         kundali = get_kundali(kundali_id)
+        print(f"PDF: Got kundali for {kundali.birth_data.name}")
 
         # Generate PDF
-        pdf_bytes = generate_kundali_pdf(kundali)
+        try:
+            pdf_bytes = generate_kundali_pdf(kundali)
+            print(f"PDF: Generated {len(pdf_bytes)} bytes")
+        except Exception as pdf_error:
+            print(f"PDF generation error: {pdf_error}")
+            import traceback
+            traceback.print_exc()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"PDF generation failed: {str(pdf_error)}"
+            )
 
         # Create filename
         name_safe = kundali.birth_data.name.replace(' ', '_')[:20]
@@ -246,6 +257,9 @@ async def download_kundali_pdf(kundali_id: str):
     except HTTPException:
         raise
     except Exception as e:
+        print(f"PDF endpoint error: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error generating PDF: {str(e)}"
