@@ -1,5 +1,13 @@
 # Kundali Software - Vedic Astrology Application
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.10+-green.svg)
+![Node.js](https://img.shields.io/badge/node.js-18+-brightgreen.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)
+![Next.js](https://img.shields.io/badge/Next.js-14+-black.svg)
+![GitHub stars](https://img.shields.io/github/stars/alok-fullstack/kundali_software?style=social)
+![GitHub forks](https://img.shields.io/github/forks/alok-fullstack/kundali_software?style=social)
+
 A comprehensive Vedic Astrology (Jyotish) application that generates accurate Kundali (birth charts), predictions, and astrological analysis based on traditional Hindu astrology principles.
 
 ## Features
