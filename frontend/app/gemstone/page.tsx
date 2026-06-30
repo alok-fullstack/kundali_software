@@ -761,7 +761,7 @@ export default function GemstonePage() {
 
         {/* Form Section */}
         {!result && !simpleResult && (
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+          <div className="bg-white rounded-xl shadow-lg mb-6">
             <div className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white p-4">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">💎</span>
