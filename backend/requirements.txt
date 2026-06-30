@@ -7,7 +7,12 @@ python-multipart>=0.0.6
 # CORS and security
 python-jose[cryptography]>=3.3.0
 
-# The src/ folder dependencies (already installed via main requirements.txt)
-# pyswisseph>=2.10.3
-# geopy>=2.4.0
-# pytz>=2023.3
+# Swiss Ephemeris for planetary calculations
+pyswisseph>=2.10.0
+
+# Geolocation and timezone
+geopy>=2.4.0
+pytz>=2024.1
+
+# PDF Generation
+reportlab>=4.0.0
