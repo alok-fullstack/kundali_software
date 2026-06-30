@@ -18,7 +18,7 @@ interface DivisionalChartModalProps {
   kundaliId: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST?.replace('/api', '') || 'http://localhost:8000';
 
 export function DivisionalChartModal({
   isOpen,
@@ -55,7 +55,7 @@ export function DivisionalChartModal({
     setError(null);
     try {
       const response = await fetch(
-        `${API_BASE}/api/varga/chart/${kundaliId}/${vargaType}`
+        `${API_HOST}/api/varga/chart/${kundaliId}/${vargaType}`
       );
       const data = await response.json();
       if (data.success) {
@@ -75,7 +75,7 @@ export function DivisionalChartModal({
     setError(null);
     try {
       const response = await fetch(
-        `${API_BASE}/api/varga/analysis/navamsa/${kundaliId}`
+        `${API_HOST}/api/varga/analysis/navamsa/${kundaliId}`
       );
       const data = await response.json();
       if (data.success) {
@@ -95,7 +95,7 @@ export function DivisionalChartModal({
     setError(null);
     try {
       const response = await fetch(
-        `${API_BASE}/api/varga/analysis/dasamsa/${kundaliId}`
+        `${API_HOST}/api/varga/analysis/dasamsa/${kundaliId}`
       );
       const data = await response.json();
       if (data.success) {
