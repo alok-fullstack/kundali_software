@@ -9,6 +9,9 @@ Uses ReportLab for PDF generation with traditional Vedic astrology styling.
 """
 
 import io
+import os
+import urllib.request
+from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
@@ -32,6 +35,87 @@ from .kundali import Kundali
 from .config import PLANET_NAMES, Planet, BHAVA_NAMES, RASHIS
 from .yogas import get_all_yogas, get_yoga_summary
 from .dasha import DashaPeriod
+
+
+# =============================================================================
+# HINDI FONT SETUP - Noto Sans Devanagari
+# =============================================================================
+
+FONTS_DIR = Path(__file__).parent / "fonts"
+HINDI_FONT_PATH = FONTS_DIR / "NotoSansDevanagari-Regular.ttf"
+HINDI_FONT_BOLD_PATH = FONTS_DIR / "NotoSansDevanagari-Bold.ttf"
+
+# Google Fonts URLs for Noto Sans Devanagari
+FONT_URLS = {
+    "regular": "https://github.com/google/fonts/raw/main/ofl/notosansdevanagari/NotoSansDevanagari-Regular.ttf",
+    "bold": "https://github.com/google/fonts/raw/main/ofl/notosansdevanagari/NotoSansDevanagari-Bold.ttf"
+}
+
+HINDI_FONT_REGISTERED = False
+
+
+def download_hindi_fonts():
+    """Download Noto Sans Devanagari fonts if not present."""
+    global HINDI_FONT_REGISTERED
+
+    if HINDI_FONT_REGISTERED:
+        return True
+
+    # Create fonts directory
+    FONTS_DIR.mkdir(exist_ok=True)
+
+    try:
+        # Download regular font
+        if not HINDI_FONT_PATH.exists():
+            print("Downloading Noto Sans Devanagari Regular font...")
+            urllib.request.urlretrieve(FONT_URLS["regular"], HINDI_FONT_PATH)
+
+        # Download bold font
+        if not HINDI_FONT_BOLD_PATH.exists():
+            print("Downloading Noto Sans Devanagari Bold font...")
+            urllib.request.urlretrieve(FONT_URLS["bold"], HINDI_FONT_BOLD_PATH)
+
+        return True
+    except Exception as e:
+        print(f"Warning: Could not download Hindi fonts: {e}")
+        return False
+
+
+def register_hindi_fonts():
+    """Register Hindi fonts with ReportLab."""
+    global HINDI_FONT_REGISTERED
+
+    if HINDI_FONT_REGISTERED:
+        return True
+
+    # Try to download fonts first
+    if not download_hindi_fonts():
+        return False
+
+    try:
+        # Register fonts with ReportLab
+        if HINDI_FONT_PATH.exists():
+            pdfmetrics.registerFont(TTFont('NotoSansDevanagari', str(HINDI_FONT_PATH)))
+            pdfmetrics.registerFont(TTFont('NotoSansDevanagari-Bold', str(HINDI_FONT_BOLD_PATH)))
+
+            # Register font family
+            pdfmetrics.registerFontFamily(
+                'NotoSansDevanagari',
+                normal='NotoSansDevanagari',
+                bold='NotoSansDevanagari-Bold'
+            )
+
+            HINDI_FONT_REGISTERED = True
+            print("Hindi fonts registered successfully!")
+            return True
+    except Exception as e:
+        print(f"Warning: Could not register Hindi fonts: {e}")
+
+    return False
+
+
+# Register fonts on module load
+register_hindi_fonts()
 
 
 # =============================================================================
@@ -87,9 +171,19 @@ PLANET_SYMBOLS = {
 # PDF STYLE SETUP
 # =============================================================================
 
+def get_hindi_font():
+    """Get the Hindi font name (falls back to Helvetica if not available)."""
+    return 'NotoSansDevanagari' if HINDI_FONT_REGISTERED else 'Helvetica'
+
+def get_hindi_font_bold():
+    """Get the Hindi bold font name (falls back to Helvetica-Bold if not available)."""
+    return 'NotoSansDevanagari-Bold' if HINDI_FONT_REGISTERED else 'Helvetica-Bold'
+
 def get_styles():
     """Get custom paragraph styles for Vedic PDF reports."""
     styles = getSampleStyleSheet()
+    hindi_font = get_hindi_font()
+    hindi_font_bold = get_hindi_font_bold()
 
     # Title style - Om symbol header
     styles.add(ParagraphStyle(
@@ -98,7 +192,7 @@ def get_styles():
         textColor=VedicColors.SAFFRON_DARK,
         alignment=TA_CENTER,
         spaceAfter=6,
-        fontName='Helvetica-Bold'
+        fontName=hindi_font_bold
     ))
 
     # Main heading
@@ -109,7 +203,7 @@ def get_styles():
         alignment=TA_CENTER,
         spaceAfter=12,
         spaceBefore=12,
-        fontName='Helvetica-Bold'
+        fontName=hindi_font_bold
     ))
 
     # Section heading
@@ -120,7 +214,7 @@ def get_styles():
         alignment=TA_LEFT,
         spaceAfter=8,
         spaceBefore=16,
-        fontName='Helvetica-Bold'
+        fontName=hindi_font_bold
     ))
 
     # Subsection heading
@@ -131,7 +225,7 @@ def get_styles():
         alignment=TA_LEFT,
         spaceAfter=6,
         spaceBefore=10,
-        fontName='Helvetica-Bold'
+        fontName=hindi_font_bold
     ))
 
     # Normal text
@@ -141,7 +235,7 @@ def get_styles():
         textColor=VedicColors.BLACK,
         alignment=TA_JUSTIFY,
         spaceAfter=4,
-        fontName='Helvetica'
+        fontName=hindi_font
     ))
 
     # Hindi text (bilingual)
@@ -151,7 +245,7 @@ def get_styles():
         textColor=VedicColors.GRAY,
         alignment=TA_LEFT,
         spaceAfter=4,
-        fontName='Helvetica'
+        fontName=hindi_font
     ))
 
     # Footer style
@@ -160,7 +254,7 @@ def get_styles():
         fontSize=8,
         textColor=VedicColors.GRAY,
         alignment=TA_CENTER,
-        fontName='Helvetica-Oblique'
+        fontName=hindi_font
     ))
 
     # Score highlight
@@ -169,7 +263,7 @@ def get_styles():
         fontSize=18,
         textColor=VedicColors.GREEN,
         alignment=TA_CENTER,
-        fontName='Helvetica-Bold'
+        fontName=hindi_font_bold
     ))
 
     return styles
