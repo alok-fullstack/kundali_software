@@ -123,23 +123,38 @@ register_hindi_fonts()
 # =============================================================================
 
 class VedicColors:
-    """Vedic astrology color palette."""
+    """Vedic astrology color palette - matching web design."""
+    # Primary Orange/Saffron gradient colors
     SAFFRON = colors.HexColor('#FF6B00')
-    SAFFRON_LIGHT = colors.HexColor('#FFA500')
-    SAFFRON_DARK = colors.HexColor('#CC5500')
+    SAFFRON_LIGHT = colors.HexColor('#FF8C00')
+    SAFFRON_DARK = colors.HexColor('#E65100')
+    ORANGE_GRADIENT_START = colors.HexColor('#FF6B00')
+    ORANGE_GRADIENT_END = colors.HexColor('#FFA500')
+
+    # Accent colors
     GOLD = colors.HexColor('#FFD700')
     CREAM = colors.HexColor('#FFF8DC')
-    MAROON = colors.HexColor('#800000')
+    WARM_CREAM = colors.HexColor('#FFFAF0')
+    LIGHT_ORANGE = colors.HexColor('#FFF3E0')
+
+    # Text and borders
+    MAROON = colors.HexColor('#8B4513')
     DEEP_RED = colors.HexColor('#8B0000')
+    BROWN = colors.HexColor('#D2691E')
+
+    # Status colors
     GREEN = colors.HexColor('#228B22')
-    LIGHT_GREEN = colors.HexColor('#90EE90')
-    BLUE = colors.HexColor('#1E90FF')
-    LIGHT_BLUE = colors.HexColor('#ADD8E6')
-    PURPLE = colors.HexColor('#800080')
-    PINK = colors.HexColor('#FF69B4')
-    LIGHT_PINK = colors.HexColor('#FFB6C1')
+    LIGHT_GREEN = colors.HexColor('#E8F5E9')
+    BLUE = colors.HexColor('#1976D2')
+    LIGHT_BLUE = colors.HexColor('#E3F2FD')
+    PURPLE = colors.HexColor('#7B1FA2')
+    PINK = colors.HexColor('#E91E63')
+    LIGHT_PINK = colors.HexColor('#FCE4EC')
+
+    # Neutrals
     GRAY = colors.HexColor('#666666')
     LIGHT_GRAY = colors.HexColor('#F5F5F5')
+    BORDER_GRAY = colors.HexColor('#E0E0E0')
     WHITE = colors.white
     BLACK = colors.black
 
@@ -498,65 +513,102 @@ class KundaliPDFGenerator:
         self.elements = []
 
     def _add_header(self):
-        """Add report header with Om symbol and title."""
-        # Om symbol (using Unicode)
-        self.elements.append(Paragraph(
-            '<font size="36" color="#FF6B00">&#x0950;</font>',
-            self.styles['VedicTitle']
-        ))
+        """Add report header with Om symbol and title - web-like design."""
+        hindi_font = get_hindi_font()
+        hindi_font_bold = get_hindi_font_bold()
 
-        self.elements.append(Paragraph(
-            "JANAM KUNDALI / जन्म कुंडली",
-            self.styles['VedicTitle']
-        ))
+        # Header table with orange background
+        header_data = [[
+            Paragraph(
+                '<font size="32" color="white">&#x0950;</font>',
+                ParagraphStyle('OmSymbol', alignment=TA_CENTER, fontName=hindi_font)
+            )
+        ], [
+            Paragraph(
+                '<font size="22" color="white"><b>जन्म कुंडली</b></font>',
+                ParagraphStyle('TitleHindi', alignment=TA_CENTER, fontName=hindi_font_bold)
+            )
+        ], [
+            Paragraph(
+                '<font size="14" color="white">JANAM KUNDALI</font>',
+                ParagraphStyle('TitleEng', alignment=TA_CENTER)
+            )
+        ], [
+            Paragraph(
+                f'<font size="16" color="white"><b>{self.kundali.birth_data.name}</b></font>',
+                ParagraphStyle('Name', alignment=TA_CENTER, fontName=hindi_font_bold)
+            )
+        ]]
 
-        self.elements.append(Paragraph(
-            f"<b>{self.kundali.birth_data.name}</b>",
-            self.styles['VedicHeading']
-        ))
+        header_table = Table(header_data, colWidths=[6.5*inch])
+        header_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), VedicColors.SAFFRON),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('TOPPADDING', (0, 0), (-1, 0), 15),
+            ('BOTTOMPADDING', (0, -1), (-1, -1), 15),
+            ('LEFTPADDING', (0, 0), (-1, -1), 20),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 20),
+            ('ROUNDEDCORNERS', [10, 10, 10, 10]),
+        ]))
 
-        # Horizontal line
-        self.elements.append(HRFlowable(
-            width="100%", thickness=2, color=VedicColors.SAFFRON,
-            spaceBefore=10, spaceAfter=10
-        ))
+        self.elements.append(header_table)
+        self.elements.append(Spacer(1, 15))
 
     def _add_birth_details(self):
-        """Add birth details section."""
-        self.elements.append(Paragraph(
-            "Birth Details / जन्म विवरण",
-            self.styles['SectionHeading']
-        ))
+        """Add birth details section with card-like styling."""
+        hindi_font = get_hindi_font()
+
+        # Section header with orange background
+        section_header = Table([[Paragraph(
+            '<font color="white"><b>जन्म विवरण / Birth Details</b></font>',
+            ParagraphStyle('SectionHead', fontSize=12, alignment=TA_LEFT, fontName=get_hindi_font_bold())
+        )]], colWidths=[6.5*inch])
+        section_header.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), VedicColors.SAFFRON),
+            ('LEFTPADDING', (0, 0), (-1, -1), 15),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        self.elements.append(section_header)
 
         birth = self.kundali.birth_data
         lagna = self.kundali.lagna
         planets = self.kundali.planets
         current_dasha = self.kundali.get_current_dasha()
 
-        # Birth details table
+        lagna_hindi = RASHI_HINDI.get(lagna['rashi'], lagna['rashi'])
+        moon_hindi = RASHI_HINDI.get(planets['MOON']['rashi'], planets['MOON']['rashi'])
+
+        # Birth details in styled table
         data = [
-            ["Name / नाम", birth.name],
-            ["Date of Birth / जन्म तिथि", birth.date.strftime('%d-%m-%Y')],
-            ["Time of Birth / जन्म समय", birth.date.strftime('%I:%M %p')],
-            ["Place of Birth / जन्म स्थान", birth.city],
-            ["Coordinates / निर्देशांक", f"{abs(birth.latitude):.4f}°{'N' if birth.latitude >= 0 else 'S'}, {abs(birth.longitude):.4f}°{'E' if birth.longitude >= 0 else 'W'}"],
-            ["Lagna / लग्न", f"{RASHI_HINDI.get(lagna['rashi'], lagna['rashi'])} ({lagna['rashi_english']})"],
-            ["Moon Sign / चंद्र राशि", f"{RASHI_HINDI.get(planets['MOON']['rashi'], planets['MOON']['rashi'])}"],
-            ["Nakshatra / नक्षत्र", f"{planets['MOON']['nakshatra']} Pada {planets['MOON']['pada']}"],
-            ["Current Dasha / वर्तमान दशा", current_dasha.get('full_dasha', 'N/A')],
+            [f"नाम / Name", birth.name],
+            [f"जन्म तिथि / Date", birth.date.strftime('%d %B %Y')],
+            [f"जन्म समय / Time", birth.date.strftime('%I:%M %p')],
+            [f"जन्म स्थान / Place", birth.city],
+            [f"निर्देशांक / Coordinates", f"{abs(birth.latitude):.4f}°{'N' if birth.latitude >= 0 else 'S'}, {abs(birth.longitude):.4f}°{'E' if birth.longitude >= 0 else 'W'}"],
+            [f"लग्न / Lagna", f"{lagna_hindi} ({lagna.get('rashi_english', lagna['rashi'])})"],
+            [f"चंद्र राशि / Moon Sign", f"{moon_hindi} ({planets['MOON']['rashi']})"],
+            [f"नक्षत्र / Nakshatra", f"{planets['MOON']['nakshatra']} - Pada {planets['MOON']['pada']}"],
+            [f"वर्तमान दशा / Current Dasha", current_dasha.get('full_dasha', 'N/A')],
         ]
 
         table = Table(data, colWidths=[2.5*inch, 4*inch])
         table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (0, -1), VedicColors.CREAM),
+            ('BACKGROUND', (0, 0), (0, -1), VedicColors.WARM_CREAM),
+            ('BACKGROUND', (1, 0), (1, -1), VedicColors.WHITE),
             ('TEXTCOLOR', (0, 0), (0, -1), VedicColors.MAROON),
-            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-            ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
+            ('FONTNAME', (0, 0), (0, -1), hindi_font),
+            ('FONTNAME', (1, 0), (1, -1), hindi_font),
             ('FONTSIZE', (0, 0), (-1, -1), 10),
             ('ALIGN', (0, 0), (0, -1), 'LEFT'),
             ('ALIGN', (1, 0), (1, -1), 'LEFT'),
-            ('PADDING', (0, 0), (-1, -1), 8),
-            ('GRID', (0, 0), (-1, -1), 0.5, VedicColors.SAFFRON_LIGHT),
+            ('LEFTPADDING', (0, 0), (-1, -1), 15),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 10),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('LINEBELOW', (0, 0), (-1, -2), 0.5, VedicColors.BORDER_GRAY),
+            ('BOX', (0, 0), (-1, -1), 1, VedicColors.SAFFRON_LIGHT),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ]))
 
@@ -564,42 +616,80 @@ class KundaliPDFGenerator:
         self.elements.append(Spacer(1, 20))
 
     def _add_birth_chart(self):
-        """Add visual birth chart (Lagna Kundali)."""
-        self.elements.append(Paragraph(
-            "Lagna Kundali / लग्न कुंडली",
-            self.styles['SectionHeading']
-        ))
+        """Add visual birth chart (Lagna Kundali) with improved styling."""
+        # Section header
+        section_header = Table([[Paragraph(
+            '<font color="white"><b>लग्न कुंडली / Lagna Kundali</b></font>',
+            ParagraphStyle('SectionHead', fontSize=12, alignment=TA_LEFT, fontName=get_hindi_font_bold())
+        )]], colWidths=[6.5*inch])
+        section_header.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), VedicColors.SAFFRON),
+            ('LEFTPADDING', (0, 0), (-1, -1), 15),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        self.elements.append(section_header)
+        self.elements.append(Spacer(1, 10))
 
         planets_in_houses = self.kundali.get_planets_in_houses()
         lagna_num = self.kundali.lagna['rashi_num']
         planets = self.kundali.planets
 
-        chart = draw_kundali_chart(planets_in_houses, lagna_num, planets, 280, 280)
-        self.elements.append(chart)
+        chart = draw_kundali_chart(planets_in_houses, lagna_num, planets, 300, 300)
+
+        # Center the chart in a table
+        chart_table = Table([[chart]], colWidths=[6.5*inch])
+        chart_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        self.elements.append(chart_table)
 
         self.elements.append(Paragraph(
-            "<font size='8' color='#666666'>(R) = Retrograde / वक्री</font>",
+            "<font size='8' color='#666666'>(R) = वक्री / Retrograde | House numbers shown in corners</font>",
             ParagraphStyle('ChartNote', alignment=TA_CENTER, fontSize=8)
         ))
 
         self.elements.append(Spacer(1, 15))
 
     def _add_planet_positions(self):
-        """Add planet positions table."""
-        self.elements.append(Paragraph(
-            "Planet Positions / ग्रह स्थिति",
-            self.styles['SectionHeading']
-        ))
+        """Add planet positions table with improved styling."""
+        hindi_font = get_hindi_font()
+
+        # Section header
+        section_header = Table([[Paragraph(
+            '<font color="white"><b>ग्रह स्थिति / Planet Positions</b></font>',
+            ParagraphStyle('SectionHead', fontSize=12, alignment=TA_LEFT, fontName=get_hindi_font_bold())
+        )]], colWidths=[6.5*inch])
+        section_header.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), VedicColors.SAFFRON),
+            ('LEFTPADDING', (0, 0), (-1, -1), 15),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        self.elements.append(section_header)
 
         planets = self.kundali.planets
         planets_in_houses = self.kundali.get_planets_in_houses()
 
-        # Header
-        data = [["Planet\nग्रह", "Rashi\nराशि", "Degree\nअंश", "Nakshatra\nनक्षत्र", "House\nभाव", "Status\nगति"]]
+        # Header with better styling
+        header_style = ParagraphStyle('TableHeader', fontSize=9, textColor=VedicColors.WHITE,
+                                       alignment=TA_CENTER, fontName='Helvetica-Bold')
+        data = [[
+            Paragraph("ग्रह<br/>Planet", header_style),
+            Paragraph("राशि<br/>Sign", header_style),
+            Paragraph("अंश<br/>Degree", header_style),
+            Paragraph("नक्षत्र<br/>Nakshatra", header_style),
+            Paragraph("भाव<br/>House", header_style),
+            Paragraph("गति<br/>Motion", header_style)
+        ]]
+
+        cell_style = ParagraphStyle('TableCell', fontSize=9, alignment=TA_CENTER, fontName=hindi_font)
 
         for p_name in ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN", "RAHU", "KETU"]:
             p_data = planets[p_name]
             hindi_name = PLANET_HINDI.get(p_name, p_name)
+            symbol = PLANET_NAMES[Planet[p_name]]["symbol"]
             rashi = RASHI_HINDI.get(p_data['rashi'], p_data['rashi'])
 
             # Find house
@@ -609,79 +699,110 @@ class KundaliPDFGenerator:
                     house = h
                     break
 
-            status = "Retro/वक्री" if p_data['is_retrograde'] else "Direct/मार्गी"
+            is_retro = p_data['is_retrograde']
+            status_color = VedicColors.DEEP_RED if is_retro else VedicColors.GREEN
+            status = "वक्री (R)" if is_retro else "मार्गी"
 
             data.append([
-                f"{p_name}\n{hindi_name}",
-                rashi,
-                f"{p_data['rashi_degree']:.2f}°",
-                f"{p_data['nakshatra']}\nPada {p_data['pada']}",
-                str(house),
-                status
+                Paragraph(f"{symbol} {hindi_name}", cell_style),
+                Paragraph(rashi, cell_style),
+                Paragraph(f"{p_data['rashi_degree']:.2f}°", cell_style),
+                Paragraph(f"{p_data['nakshatra']}<br/>Pada {p_data['pada']}", cell_style),
+                Paragraph(str(house), cell_style),
+                Paragraph(f'<font color="{status_color.hexval()}">{status}</font>', cell_style)
             ])
 
-        table = Table(data, colWidths=[1*inch, 0.9*inch, 0.8*inch, 1.3*inch, 0.6*inch, 1*inch])
+        table = Table(data, colWidths=[1.1*inch, 0.85*inch, 0.75*inch, 1.2*inch, 0.6*inch, 0.9*inch])
         table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), VedicColors.SAFFRON),
-            ('TEXTCOLOR', (0, 0), (-1, 0), VedicColors.WHITE),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 8),
+            ('BACKGROUND', (0, 0), (-1, 0), VedicColors.MAROON),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('PADDING', (0, 0), (-1, -1), 6),
-            ('GRID', (0, 0), (-1, -1), 0.5, VedicColors.SAFFRON_LIGHT),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [VedicColors.WHITE, VedicColors.CREAM]),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+            ('LINEBELOW', (0, 0), (-1, -2), 0.5, VedicColors.BORDER_GRAY),
+            ('BOX', (0, 0), (-1, -1), 1, VedicColors.SAFFRON_LIGHT),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [VedicColors.WHITE, VedicColors.LIGHT_ORANGE]),
         ]))
 
         self.elements.append(table)
-        self.elements.append(Spacer(1, 15))
+        self.elements.append(Spacer(1, 20))
 
     def _add_dasha_periods(self):
-        """Add Vimshottari Dasha periods."""
-        self.elements.append(Paragraph(
-            "Vimshottari Dasha / विमशोत्तरी दशा",
-            self.styles['SectionHeading']
-        ))
+        """Add Vimshottari Dasha periods with improved styling."""
+        hindi_font = get_hindi_font()
+
+        # Section header
+        section_header = Table([[Paragraph(
+            '<font color="white"><b>विमशोत्तरी दशा / Vimshottari Dasha</b></font>',
+            ParagraphStyle('SectionHead', fontSize=12, alignment=TA_LEFT, fontName=get_hindi_font_bold())
+        )]], colWidths=[6.5*inch])
+        section_header.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), VedicColors.SAFFRON),
+            ('LEFTPADDING', (0, 0), (-1, -1), 15),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        self.elements.append(section_header)
 
         current_dasha = self.kundali.get_current_dasha()
         mahadashas = self.kundali.get_mahadashas(years=60)
 
-        # Current Dasha highlight
-        self.elements.append(Paragraph(
-            f"<b>Current Period / वर्तमान दशा:</b> {current_dasha.get('full_dasha', 'N/A')}",
-            self.styles['VedicNormal']
-        ))
-
+        # Current Dasha highlight box
+        current_box = Table([[Paragraph(
+            f'<font color="#228B22"><b>वर्तमान दशा / Current Period:</b></font> {current_dasha.get("full_dasha", "N/A")}',
+            ParagraphStyle('CurrentDasha', fontSize=10, alignment=TA_LEFT, fontName=hindi_font)
+        )]], colWidths=[6.5*inch])
+        current_box.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), VedicColors.LIGHT_GREEN),
+            ('LEFTPADDING', (0, 0), (-1, -1), 15),
+            ('TOPPADDING', (0, 0), (-1, -1), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+            ('BOX', (0, 0), (-1, -1), 1, VedicColors.GREEN),
+        ]))
+        self.elements.append(current_box)
         self.elements.append(Spacer(1, 10))
 
-        # Dasha table
-        data = [["Mahadasha\nमहादशा", "Start Date\nआरंभ", "End Date\nसमाप्ति", "Duration\nअवधि"]]
+        # Dasha table with improved styling
+        header_style = ParagraphStyle('TableHeader', fontSize=9, textColor=VedicColors.WHITE,
+                                       alignment=TA_CENTER, fontName='Helvetica-Bold')
+        cell_style = ParagraphStyle('TableCell', fontSize=9, alignment=TA_CENTER, fontName=hindi_font)
 
-        for maha in mahadashas[:10]:  # First 10
+        data = [[
+            Paragraph("महादशा<br/>Mahadasha", header_style),
+            Paragraph("आरंभ तिथि<br/>Start Date", header_style),
+            Paragraph("समाप्ति तिथि<br/>End Date", header_style),
+            Paragraph("अवधि<br/>Duration", header_style)
+        ]]
+
+        for maha in mahadashas[:10]:
             hindi_planet = PLANET_HINDI.get(maha.planet, maha.planet)
-            duration = f"{maha.duration_years:.1f} years"
+            symbol = PLANET_NAMES[Planet[maha.planet]]["symbol"]
+            duration = f"{maha.duration_years:.1f} वर्ष"
             data.append([
-                f"{maha.planet}\n{hindi_planet}",
-                maha.start_date.strftime('%d-%m-%Y'),
-                maha.end_date.strftime('%d-%m-%Y'),
-                duration
+                Paragraph(f"{symbol} {hindi_planet}", cell_style),
+                Paragraph(maha.start_date.strftime('%d-%m-%Y'), cell_style),
+                Paragraph(maha.end_date.strftime('%d-%m-%Y'), cell_style),
+                Paragraph(duration, cell_style)
             ])
 
-        table = Table(data, colWidths=[1.4*inch, 1.3*inch, 1.3*inch, 1.1*inch])
+        table = Table(data, colWidths=[1.6*inch, 1.4*inch, 1.4*inch, 1.2*inch])
         table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), VedicColors.MAROON),
-            ('TEXTCOLOR', (0, 0), (-1, 0), VedicColors.WHITE),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BACKGROUND', (0, 0), (-1, 0), VedicColors.BLUE),
             ('FONTSIZE', (0, 0), (-1, -1), 9),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('PADDING', (0, 0), (-1, -1), 6),
-            ('GRID', (0, 0), (-1, -1), 0.5, VedicColors.SAFFRON_LIGHT),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [VedicColors.WHITE, VedicColors.CREAM]),
+            ('TOPPADDING', (0, 0), (-1, -1), 7),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 7),
+            ('LINEBELOW', (0, 0), (-1, -2), 0.5, VedicColors.BORDER_GRAY),
+            ('BOX', (0, 0), (-1, -1), 1, VedicColors.BLUE),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [VedicColors.WHITE, VedicColors.LIGHT_BLUE]),
         ]))
 
         self.elements.append(table)
-        self.elements.append(Spacer(1, 15))
+        self.elements.append(Spacer(1, 20))
 
     def _add_yogas(self):
         """Add Yoga analysis section."""
@@ -880,39 +1001,52 @@ class KundaliPDFGenerator:
         self.elements.append(Spacer(1, 15))
 
     def _add_footer(self):
-        """Add report footer with disclaimer."""
-        self.elements.append(HRFlowable(
-            width="100%", thickness=1, color=VedicColors.SAFFRON,
-            spaceBefore=20, spaceAfter=10
-        ))
+        """Add report footer with disclaimer - web-like design."""
+        hindi_font = get_hindi_font()
 
-        self.elements.append(Paragraph(
-            '<font size="12" color="#FF6B00">&#x0950;</font> '
-            '<font size="10">शुभम् भवतु / May Auspiciousness Prevail</font> '
-            '<font size="12" color="#FF6B00">&#x0950;</font>',
-            ParagraphStyle('Blessing', alignment=TA_CENTER, fontSize=10)
-        ))
+        # Footer with orange background like web
+        footer_data = [
+            [Paragraph(
+                '<font size="14" color="white">&#x0950;</font> '
+                '<font size="11" color="white"><b>शुभम् भवतु</b></font> '
+                '<font size="14" color="white">&#x0950;</font>',
+                ParagraphStyle('Blessing', alignment=TA_CENTER, fontName=hindi_font)
+            )],
+            [Paragraph(
+                '<font size="9" color="white">May Auspiciousness Prevail</font>',
+                ParagraphStyle('BlessingEng', alignment=TA_CENTER)
+            )],
+            [Paragraph(
+                f'<font size="8" color="white">Generated on {datetime.now().strftime("%d %B %Y, %I:%M %p")}</font>',
+                ParagraphStyle('GenDate', alignment=TA_CENTER)
+            )],
+            [Paragraph(
+                '<font size="7" color="white">Powered by Kundali Software | Swiss Ephemeris | Lahiri Ayanamsha</font>',
+                ParagraphStyle('Powered', alignment=TA_CENTER)
+            )],
+        ]
 
+        footer_table = Table(footer_data, colWidths=[6.5*inch])
+        footer_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), VedicColors.SAFFRON),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('TOPPADDING', (0, 0), (-1, 0), 15),
+            ('BOTTOMPADDING', (0, -1), (-1, -1), 15),
+            ('TOPPADDING', (0, 1), (-1, -1), 3),
+            ('BOTTOMPADDING', (0, 0), (-1, -2), 3),
+        ]))
+
+        self.elements.append(Spacer(1, 20))
+        self.elements.append(footer_table)
         self.elements.append(Spacer(1, 10))
 
+        # Disclaimer
         self.elements.append(Paragraph(
-            f"Generated on: {datetime.now().strftime('%d-%m-%Y %H:%M')}",
-            self.styles['Footer']
-        ))
-
-        self.elements.append(Paragraph(
-            "Swiss Ephemeris (NASA JPL DE431) | Lahiri Ayanamsha",
-            self.styles['Footer']
-        ))
-
-        self.elements.append(Spacer(1, 10))
-
-        self.elements.append(Paragraph(
-            "<b>Disclaimer / अस्वीकरण:</b> This report is for guidance only. "
-            "For important life decisions, please consult a qualified astrologer. "
-            "यह रिपोर्ट केवल मार्गदर्शन के लिए है। महत्वपूर्ण निर्णयों के लिए योग्य ज्योतिषी से परामर्श करें।",
+            "<b>अस्वीकरण / Disclaimer:</b> यह रिपोर्ट केवल मार्गदर्शन के लिए है। "
+            "महत्वपूर्ण निर्णयों के लिए योग्य ज्योतिषी से परामर्श करें। "
+            "This report is for guidance only. Consult a qualified astrologer for important decisions.",
             ParagraphStyle('Disclaimer', alignment=TA_CENTER, fontSize=7,
-                          textColor=VedicColors.GRAY)
+                          textColor=VedicColors.GRAY, fontName=hindi_font)
         ))
 
     def generate_pdf(self) -> bytes:
