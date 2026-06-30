@@ -51,33 +51,37 @@ async def recommend_gemstones(request: GemstoneRequest):
 
     try:
         advisor = GemstoneAdvisor(request.kundali_data)
-        recommendations = advisor.get_primary_recommendations()
+        primary_recs = advisor.get_primary_recommendations()
+        secondary_recs = advisor.get_secondary_recommendations()
+
+        def format_rec(rec):
+            return {
+                "planet": rec.planet,
+                "planet_hindi": rec.planet_hindi,
+                "gemstone": rec.gemstone.name_english,
+                "gemstone_hindi": rec.gemstone.name_hindi,
+                "substitute": rec.gemstone.alternative_stones,
+                "weight": f"{rec.gemstone.minimum_weight_ratti} रत्ती / {rec.gemstone.minimum_weight_carat} carat",
+                "metal": rec.gemstone.metal_hindi,
+                "finger": rec.gemstone.finger_hindi,
+                "day_to_wear": rec.gemstone.day_hindi,
+                "mantra": rec.gemstone.mantra,
+                "benefits": rec.gemstone.benefits,
+                "benefits_hindi": rec.gemstone.benefits,
+                "precautions": rec.gemstone.precautions,
+                "precautions_hindi": rec.gemstone.precautions,
+                "reason": rec.reason,
+                "reason_hindi": rec.reason_hindi,
+                "priority": rec.priority_label_hindi
+            }
+
+        # Combine primary and secondary recommendations
+        all_recs = [format_rec(r) for r in primary_recs] + [format_rec(r) for r in secondary_recs]
 
         return {
             "success": True,
             "recommendations": {
-                "primary_gemstones": [
-                    {
-                        "planet": rec.planet,
-                        "planet_hindi": rec.planet_hindi,
-                        "gemstone": rec.gemstone.name_english,
-                        "gemstone_hindi": rec.gemstone.name_hindi,
-                        "substitute": rec.gemstone.alternative_stones,
-                        "weight": f"{rec.gemstone.minimum_weight_ratti} रत्ती / {rec.gemstone.minimum_weight_carat} carat",
-                        "metal": rec.gemstone.metal_hindi,
-                        "finger": rec.gemstone.finger_hindi,
-                        "day_to_wear": rec.gemstone.day_hindi,
-                        "mantra": rec.gemstone.mantra,
-                        "benefits": rec.gemstone.benefits,
-                        "benefits_hindi": rec.gemstone.benefits,
-                        "precautions": rec.gemstone.precautions,
-                        "precautions_hindi": rec.gemstone.precautions,
-                        "reason": rec.reason,
-                        "reason_hindi": rec.reason_hindi,
-                        "priority": rec.priority_label_hindi
-                    }
-                    for rec in recommendations
-                ],
+                "primary_gemstones": all_recs,
                 "general_advice": "Consult a qualified astrologer before wearing gemstones.",
                 "general_advice_hindi": "रत्न धारण करने से पहले योग्य ज्योतिषी से परामर्श लें।"
             }
@@ -111,33 +115,39 @@ async def analyze_gemstones(request: GemstoneByIdRequest):
 
         # Get recommendations using the Kundali object
         advisor = GemstoneAdvisor(kundali)
-        recommendations = advisor.get_primary_recommendations()
+        primary_recs = advisor.get_primary_recommendations()
+        secondary_recs = advisor.get_secondary_recommendations()
+        stones_to_avoid = advisor.get_stones_to_avoid()
+
+        def format_rec(rec):
+            return {
+                "planet": rec.planet,
+                "planet_hindi": rec.planet_hindi,
+                "gemstone": rec.gemstone.name_english,
+                "gemstone_hindi": rec.gemstone.name_hindi,
+                "substitute": rec.gemstone.alternative_stones,
+                "weight": f"{rec.gemstone.minimum_weight_ratti} रत्ती / {rec.gemstone.minimum_weight_carat} carat",
+                "metal": rec.gemstone.metal_hindi,
+                "finger": rec.gemstone.finger_hindi,
+                "day_to_wear": rec.gemstone.day_hindi,
+                "mantra": rec.gemstone.mantra,
+                "benefits": rec.gemstone.benefits,
+                "benefits_hindi": rec.gemstone.benefits,
+                "precautions": rec.gemstone.precautions,
+                "precautions_hindi": rec.gemstone.precautions,
+                "reason": rec.reason,
+                "reason_hindi": rec.reason_hindi,
+                "priority": rec.priority_label_hindi
+            }
+
+        # Combine primary and secondary recommendations
+        all_recs = [format_rec(r) for r in primary_recs] + [format_rec(r) for r in secondary_recs]
 
         return {
             "success": True,
             "recommendations": {
-                "primary_gemstones": [
-                    {
-                        "planet": rec.planet,
-                        "planet_hindi": rec.planet_hindi,
-                        "gemstone": rec.gemstone.name_english,
-                        "gemstone_hindi": rec.gemstone.name_hindi,
-                        "substitute": rec.gemstone.alternative_stones,
-                        "weight": f"{rec.gemstone.minimum_weight_ratti} रत्ती / {rec.gemstone.minimum_weight_carat} carat",
-                        "metal": rec.gemstone.metal_hindi,
-                        "finger": rec.gemstone.finger_hindi,
-                        "day_to_wear": rec.gemstone.day_hindi,
-                        "mantra": rec.gemstone.mantra,
-                        "benefits": rec.gemstone.benefits,
-                        "benefits_hindi": rec.gemstone.benefits,
-                        "precautions": rec.gemstone.precautions,
-                        "precautions_hindi": rec.gemstone.precautions,
-                        "reason": rec.reason,
-                        "reason_hindi": rec.reason_hindi,
-                        "priority": rec.priority_label_hindi
-                    }
-                    for rec in recommendations
-                ],
+                "primary_gemstones": all_recs,
+                "stones_to_avoid": stones_to_avoid,
                 "general_advice": "Consult a qualified astrologer before wearing gemstones.",
                 "general_advice_hindi": "रत्न धारण करने से पहले योग्य ज्योतिषी से परामर्श लें।"
             }
