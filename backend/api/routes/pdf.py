@@ -267,6 +267,82 @@ async def download_kundali_pdf(kundali_id: str):
 
 
 @router.post(
+    "/kundali/pdf",
+    responses={
+        200: {
+            "content": {"application/pdf": {}},
+            "description": "PDF file containing the Kundali report"
+        },
+        400: {"model": ErrorResponse, "description": "Invalid input data"},
+        500: {"model": ErrorResponse, "description": "Server error during PDF generation"}
+    },
+    summary="Generate Kundali PDF from parameters",
+    description="Generate PDF by providing birth details directly (no kundali_id needed)"
+)
+async def generate_kundali_pdf_direct(request: PersonDetailsForPDF):
+    """
+    Generate Kundali PDF directly from birth parameters.
+    This is useful when the stored kundali is no longer available.
+    """
+    try:
+        # Parse date and time
+        dob_parts = request.dob.split('-')
+        tob_parts = request.tob.split(':')
+
+        # Create kundali
+        kundali = create_kundali(
+            name=request.name,
+            year=int(dob_parts[0]),
+            month=int(dob_parts[1]),
+            day=int(dob_parts[2]),
+            hour=int(tob_parts[0]),
+            minute=int(tob_parts[1]),
+            city=request.city,
+            latitude=request.latitude,
+            longitude=request.longitude,
+            timezone=request.timezone
+        )
+
+        print(f"PDF Direct: Created kundali for {request.name}")
+
+        # Generate PDF
+        try:
+            pdf_bytes = generate_kundali_pdf(kundali)
+            print(f"PDF Direct: Generated {len(pdf_bytes)} bytes")
+        except Exception as pdf_error:
+            print(f"PDF generation error: {pdf_error}")
+            import traceback
+            traceback.print_exc()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"PDF generation failed: {str(pdf_error)}"
+            )
+
+        # Create filename
+        name_safe = request.name.replace(' ', '_')[:20]
+        filename = f"Kundali_{name_safe}_{datetime.now().strftime('%Y%m%d')}.pdf"
+
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"PDF direct endpoint error: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error generating PDF: {str(e)}"
+        )
+
+
+@router.post(
     "/matching/pdf",
     responses={
         200: {

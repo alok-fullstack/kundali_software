@@ -319,13 +319,41 @@ export async function getAllRashifal(
 
 /**
  * Download Kundali PDF report
+ * Uses stored kundali parameters to regenerate PDF (works even after server restart)
  */
 export async function downloadKundaliPDF(kundaliId: string): Promise<void> {
   try {
-    const response = await fetch(`${API_BASE}/kundali/${kundaliId}/pdf`, {
-      method: 'GET',
-      credentials: 'include',
-    });
+    // Get stored kundali parameters from sessionStorage
+    const currentKundali = sessionStorage.getItem('current_kundali');
+
+    let response: Response;
+
+    if (currentKundali) {
+      // Use POST endpoint with parameters (more reliable)
+      const params = JSON.parse(currentKundali);
+      response = await fetch(`${API_BASE}/kundali/pdf`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: params.name,
+          dob: params.dob,
+          tob: params.tob,
+          city: params.city,
+          latitude: params.latitude,
+          longitude: params.longitude,
+          timezone: 'Asia/Kolkata'
+        }),
+        credentials: 'include',
+      });
+    } else {
+      // Fallback to GET endpoint with kundali_id
+      response = await fetch(`${API_BASE}/kundali/${kundaliId}/pdf`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
