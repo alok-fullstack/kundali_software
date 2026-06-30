@@ -24,8 +24,16 @@ if str(kundali_dir) not in sys.path:
     sys.path.insert(0, str(kundali_dir))
 
 from src.kundali import create_kundali, Kundali
-from src.pdf_generator import generate_kundali_pdf, generate_matching_pdf
 from src.kundali_matching import KundaliMatcher
+
+# Try WeasyPrint first (better HTML-to-PDF), fallback to ReportLab
+try:
+    from src.weasy_pdf_generator import generate_kundali_pdf_weasy as generate_kundali_pdf
+    from src.weasy_pdf_generator import generate_matching_pdf_weasy as generate_matching_pdf
+    PDF_ENGINE = "weasyprint"
+except ImportError:
+    from src.pdf_generator import generate_kundali_pdf, generate_matching_pdf
+    PDF_ENGINE = "reportlab"
 from src.matching_predictions import generate_matching_predictions
 
 # Import kundali store from kundali routes

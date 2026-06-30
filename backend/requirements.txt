@@ -16,3 +16,4 @@ pytz>=2024.1
 
 # PDF Generation
 reportlab>=4.0.0
+weasyprint>=60.0
