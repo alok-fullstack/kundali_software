@@ -41,13 +41,19 @@ const AnalysisNav = () => (
 );
 
 interface DoshaResult {
-  is_present: boolean;
+  is_present?: boolean;
+  is_active?: boolean;  // for sade_sati
+  is_manglik?: boolean; // for manglik
   severity?: string;
   type?: string;
   type_hindi?: string;
+  kaal_sarp_type?: string;
   effects?: string[];
+  effects_hindi?: string[];
   remedies?: string[];
+  remedies_hindi?: string[];
   causes?: string[];
+  causes_hindi?: string[];
   phase?: string;
   phase_hindi?: string;
   mars_house?: number;
@@ -147,9 +153,19 @@ export default function DoshaPage() {
 
     if (!dosha) return null;
 
+    // Check if dosha is present (different fields for different doshas)
+    const isPresent = dosha.is_present || dosha.is_active || dosha.is_manglik || false;
+
+    // Get effects (prefer Hindi if available)
+    const effects = dosha.effects_hindi?.length ? dosha.effects_hindi : dosha.effects;
+    // Get remedies (prefer Hindi if available)
+    const remedies = dosha.remedies_hindi?.length ? dosha.remedies_hindi : dosha.remedies;
+    // Get causes
+    const causes = dosha.causes_hindi?.length ? dosha.causes_hindi : dosha.causes;
+
     return (
       <div className={`rounded-xl border-2 transition-all ${
-        dosha.is_present
+        isPresent
           ? 'border-red-200 bg-red-50/50'
           : 'border-green-200 bg-green-50/50'
       }`}>
@@ -167,11 +183,11 @@ export default function DoshaPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                dosha.is_present
+                isPresent
                   ? 'bg-red-100 text-red-700'
                   : 'bg-green-100 text-green-700'
               }`}>
-                {dosha.is_present ? 'उपस्थित / Present' : 'अनुपस्थित / Absent'}
+                {isPresent ? 'उपस्थित / Present' : 'अनुपस्थित / Absent'}
               </span>
               <svg
                 className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -184,19 +200,19 @@ export default function DoshaPage() {
             </div>
           </div>
 
-          {dosha.is_present && dosha.severity && (
+          {isPresent && dosha.severity && dosha.severity !== 'None' && (
             <div className={`mt-2 inline-block px-2 py-1 rounded text-xs font-medium ${getSeverityColor(dosha.severity)}`}>
               गंभीरता / Severity: {dosha.severity}
             </div>
           )}
         </div>
 
-        {isExpanded && dosha.is_present && (
+        {isExpanded && isPresent && (
           <div className="border-t border-gray-200 p-4 space-y-4">
-            {dosha.type_hindi && (
+            {(dosha.type_hindi || dosha.kaal_sarp_type) && (
               <div>
                 <h4 className="font-semibold text-gray-700 mb-1">प्रकार / Type</h4>
-                <p className="text-gray-600">{dosha.type_hindi}</p>
+                <p className="text-gray-600">{dosha.type_hindi || dosha.kaal_sarp_type}</p>
               </div>
             )}
 
@@ -214,11 +230,11 @@ export default function DoshaPage() {
               </div>
             )}
 
-            {dosha.causes && dosha.causes.length > 0 && (
+            {causes && causes.length > 0 && (
               <div>
                 <h4 className="font-semibold text-gray-700 mb-2">कारण / Causes</h4>
                 <ul className="space-y-1">
-                  {dosha.causes.map((cause, i) => (
+                  {causes.map((cause, i) => (
                     <li key={i} className="flex items-start gap-2 text-gray-600 text-sm">
                       <span className="text-orange-500 mt-1">•</span>
                       {cause}
@@ -228,11 +244,11 @@ export default function DoshaPage() {
               </div>
             )}
 
-            {dosha.effects && dosha.effects.length > 0 && (
+            {effects && effects.length > 0 && (
               <div>
                 <h4 className="font-semibold text-gray-700 mb-2">प्रभाव / Effects</h4>
                 <ul className="space-y-1">
-                  {dosha.effects.map((effect, i) => (
+                  {effects.map((effect, i) => (
                     <li key={i} className="flex items-start gap-2 text-gray-600 text-sm">
                       <span className="text-red-500 mt-1">⚠</span>
                       {effect}
@@ -242,11 +258,11 @@ export default function DoshaPage() {
               </div>
             )}
 
-            {dosha.remedies && dosha.remedies.length > 0 && (
+            {remedies && remedies.length > 0 && (
               <div>
                 <h4 className="font-semibold text-green-700 mb-2">उपाय / Remedies</h4>
                 <ul className="space-y-1">
-                  {dosha.remedies.map((remedy, i) => (
+                  {remedies.map((remedy, i) => (
                     <li key={i} className="flex items-start gap-2 text-gray-600 text-sm">
                       <span className="text-green-500 mt-1">✓</span>
                       {remedy}
