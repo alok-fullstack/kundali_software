@@ -132,10 +132,10 @@ export function CustomDatePicker({
       </button>
 
       {isOpen && (
-        <div className="absolute z-[100] mt-1 left-0 w-[240px] bg-white rounded-lg shadow-xl border border-orange-200 animate-in">
+        <div className="absolute z-[100] mt-1 right-0 w-[240px] bg-white rounded-lg shadow-xl border border-orange-200 animate-in">
           {/* Header */}
           <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 text-white rounded-t-lg">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1">
               <button
                 type="button"
                 onClick={() => handleMonthChange(-1)}
