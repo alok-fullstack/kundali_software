@@ -10,6 +10,10 @@
 
 A comprehensive Vedic Astrology (Jyotish) application that generates accurate Kundali (birth charts), predictions, and astrological analysis based on traditional Hindu astrology principles.
 
+## 🌐 Live Demo
+
+**Try it now:** [https://kundali-software-eight.vercel.app/](https://kundali-software-eight.vercel.app/)
+
 ## Features
 
 - **Kundali Generation** - Accurate birth chart calculation with planetary positions using Swiss Ephemeris
