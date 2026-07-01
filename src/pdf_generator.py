@@ -805,7 +805,9 @@ class KundaliPDFGenerator:
 
         for maha in mahadashas[:10]:
             hindi_planet = PLANET_HINDI.get(maha.planet, maha.planet)
-            symbol = PLANET_NAMES[Planet[maha.planet]]["symbol"]
+            # Convert planet name to uppercase for enum lookup
+            planet_key = maha.planet.upper() if isinstance(maha.planet, str) else maha.planet
+            symbol = PLANET_NAMES.get(Planet[planet_key], {}).get("symbol", "●")
             duration = f"{maha.duration_years:.1f} वर्ष"
             data.append([
                 Paragraph(f"{symbol} {hindi_planet}", cell_style),
